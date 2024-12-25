@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Target, School, Lightbulb, Plus, X, Save, ChevronRight } from 'lucide-react';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 interface Question {
   id: string;
   question: string;
   options: string[];
   correctAnswer: string;
+}
+interface TokenPayload {
+  id: string; 
+  email: string;
+  role: string;
 }
 
 export const CreateGameForm = () => {
@@ -25,7 +32,21 @@ export const CreateGameForm = () => {
     options: ['', '', '',],
     correctAnswer: '',
   });
+  const [userId, setUserId] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+    if (token) {
+      try {
+        const decoded: TokenPayload = jwtDecode(token);
+        setUserId(decoded.id); // Access the user ID
+        setRole(decoded.role); // Access the role
+      } catch (err) {
+        console.error('Error decoding token:', err);
+      }
+    }
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step === 2) {
@@ -51,6 +72,7 @@ export const CreateGameForm = () => {
       setStep(2);
     }
   };
+  
 
   const addQuestion = () => {
     if (currentQuestion.question && currentQuestion.options.every(opt => opt) && currentQuestion.correctAnswer) {
@@ -63,6 +85,30 @@ export const CreateGameForm = () => {
       });
     }
   };
+  const handleGameWithQuestionsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const gameData = {
+        ...formData,
+        questions, 
+        userId, 
+      };
+  
+      const response = await axios.post(`http://localhost:5000/api/games-with-questions`, gameData);
+  
+      if (response.status === 201) {
+        alert('Game and questions submitted successfully!');
+        console.log(response)
+      } else {
+        console.error('Unexpected response:', response);
+        alert('Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting the game and questions form:', error);
+      alert('Failed to submit the game and questions form. Please try again.');
+    }
+  };
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
   const removeQuestion = (id: string) => {
     setQuestions(questions.filter(q => q.id !== id));
@@ -266,7 +312,7 @@ export const CreateGameForm = () => {
               </button>
               <button
                 type="button"
-                onClick={handleSubmit}
+                onClick={handleGameWithQuestionsSubmit}
                 className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                 disabled={questions.length === 0}
               >

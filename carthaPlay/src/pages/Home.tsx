@@ -107,7 +107,7 @@ export const Home = () => {
             gradient="bg-gradient-to-r from-indigo-600 to-purple-600"
             iconBg="bg-indigo-100"
             iconColor="text-indigo-600"
-            onClick={() => navigate('/login/teacher')}
+            onClick={() => navigate('/signup/teacher')}
           />
 
           <RoleCard

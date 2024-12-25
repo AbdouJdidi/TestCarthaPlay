@@ -1,54 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Game } from '../types';
 import { BookOpen, GraduationCap, Target, Plus, Search } from 'lucide-react';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 interface GameListProps {
   role: 'teacher' | 'student';
 }
+interface TokenPayload {
+  id: string; 
+  email: string;
+  role: string;
+}
+
 
 export const GameList: React.FC<GameListProps> = ({ role }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [games, setGames] = useState<Game[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const [games] = useState<Game[]>([
-    {
-      id: '1',
-      title: 'Multiplication Fun',
-      subject: 'Mathématiques',
-      level: '4ème année',
-      difficulty: 'easy',
-      lesson: 'Multiplications',
-      teacherId: '1',
-    },
-    {
-      id: '2',
-      title: 'Grammaire Interactive',
-      subject: 'Français',
-      level: '5ème année',
-      difficulty: 'medium',
-      lesson: 'Les verbes',
-      teacherId: '1',
-    },
-    {
-      id: '3',
-      title: 'Science Explorer',
-      subject: 'Sciences',
-      level: '6ème année',
-      difficulty: 'hard',
-      lesson: 'Le système solaire',
-      teacherId: '1',
-    },
-  ]);
+  useEffect(() => {
+    const fetchGames = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+  
+      try {
+        const decoded: TokenPayload = jwtDecode(token);
+        const userId = decoded.id;
+        setUserId(userId);
+  
+        const response = await axios.get(`http://localhost:5000/api/games/${userId}`);
+        console.log(response);
+        setGames(response.data.data);
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    };
+  
+    fetchGames();
+  }, [userId]);
+  
+
+  
 
   const filteredGames = games.filter(game =>
-    game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     game.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
     game.lesson.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
@@ -104,7 +108,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
                   <BookOpen className="h-6 w-6 text-indigo-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{game.title}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{game.lesson}</h3>
                   <p className="text-sm text-gray-600">{game.subject}</p>
                 </div>
               </div>
@@ -112,7 +116,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
               <div className="space-y-3">
                 <div className="flex items-center text-sm text-gray-600">
                   <GraduationCap className="h-4 w-4 mr-2" />
-                  {game.level}
+                  {game.difficulty}
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <Target className="h-4 w-4 mr-2" />
@@ -125,7 +129,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(role === 'teacher' 
-                      ? `/teacher/games/${game.id}/edit`
+                      ? `/teacher/games/${game.id}`
                       : `/student/games/${game.id}`
                     );
                   }}

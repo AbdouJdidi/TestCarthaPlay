@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { 
   Gamepad2, 
   Library, 
@@ -9,6 +9,8 @@ import {
 
 export const TeacherDashboard = () => {
   const navigate = useNavigate();
+  const {id} = useParams();
+  console.log(id)
 
   const options = [
     {

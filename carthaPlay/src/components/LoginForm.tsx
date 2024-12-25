@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, GraduationCap, Lock, Mail } from 'lucide-react';
 import axios from 'axios';
+
 interface LoginFormProps {
   role: 'teacher' | 'student';
 }
@@ -19,18 +20,27 @@ export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-      if (response.data.message === 'success') {
+      // Make API call to the backend login route
+      const response = await axios.post('http://localhost:5000/api/login', formData);
+      console.log(response)
+
+      if (response.data.message === 'Login successful') {
+        // Save token in localStorage
         localStorage.setItem('token', response.data.token);
-        if (role === 'teacher') {
-          navigate('/teacher/dashboard');
+        const userId = response.data.user.id;
+
+        // Redirect based on the user's role
+        if (response.data.user.role === 'teacher') {
+          navigate(`/teacher/dashboard/${userId}`);
         } else {
-          navigate('/student/dashboard');
+          navigate(`/student/dashboard/${userId}`);
         }
+      } else {
+        setError('Invalid credentials');
       }
     } catch (err: any) {
-      if (err.response && err.response.data.message) {
-        setError(err.response.data.message);
+      if (err.response && err.response.data.error) {
+        setError(err.response.data.error);
       } else {
         setError('An error occurred. Please try again.');
       }
@@ -96,6 +106,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
                 Se connecter
               </button>
             </form>
+
+            {error && (
+              <div className="mt-4 text-red-600 text-center">
+                {error}
+              </div>
+            )}
           </div>
         </div>
       </div>
