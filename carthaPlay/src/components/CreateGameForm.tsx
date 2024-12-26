@@ -98,6 +98,7 @@ export const CreateGameForm = () => {
   
       if (response.status === 201) {
         alert('Game and questions submitted successfully!');
+        navigate(`/teacher/dashboard/${userId}`)
         console.log(response)
       } else {
         console.error('Unexpected response:', response);
