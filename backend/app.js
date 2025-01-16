@@ -429,6 +429,95 @@ app.get('/api/questions', async (req, res) => {
   });
   
   
+  app.put('/api/questions/:id', async (req, res) => {
+    const { id } = req.params;
+    const { question } = req.body; // Extract the updated question text from the request body
+  
+    try {
+      // Update the question in the database
+      const { data : questionData, error } = await supabase
+        .from('questions')
+        .update({ question }) // Update the `question` field in the database
+        .eq('id', id)
+        .select();
+  
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+  
+      // Return the updated question data
+      res.status(200).json(questionData[0]);
+    } catch (err) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+  
+  app.get('/api/questions/:gameId', async (req, res) => {
+    const { gameId } = req.params;
+    console.log(gameId);
+    try {
+      // Fetch questions for the specified game ID
+      const { data: questions, error: questionsError } = await supabase
+        .from('questions')
+        .select('id, question, correct_answer')
+        .eq('game_id', gameId);
+  
+      if (questionsError) {
+        return res.status(400).json({ error: questionsError.message });
+      }
+  
+      // Fetch answers for the questions
+      const questionIds = questions.map((q) => q.id);
+      const { data: answers, error: answersError } = await supabase
+        .from('answers')
+        .select('id, text, question_id')
+        .in('question_id', questionIds);
+  
+      if (answersError) {
+        return res.status(400).json({ error: answersError.message });
+      }
+  
+      // Combine questions with their answers
+      const questionsWithAnswers = questions.map((question) => ({
+        ...question,
+        options: answers
+          .filter((answer) => answer.question_id === question.id)
+          .map((answer) => ({
+            id: answer.id,
+            text: answer.text,
+          })),
+      }));
+  
+      res.status(200).json(questionsWithAnswers);
+    } catch (err) {
+      console.error('Internal server error:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+  app.put('/api/options/:optionId', async (req, res) => {
+    const { optionId } = req.params;
+    const { text } = req.body;
+  
+    try {
+      const { data: updatedOption, error } = await supabase
+        .from('answers')
+        .update({ text })
+        .eq('id', optionId)
+        .select();
+  
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+  
+      res.status(200).json(updatedOption[0]);
+    } catch (err) {
+      console.error('Error updating option:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
   
   
   
