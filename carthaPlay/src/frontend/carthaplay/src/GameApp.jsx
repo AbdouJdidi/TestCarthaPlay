@@ -34,7 +34,7 @@ const GameApp = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/question/questions'); 
+        const response = await axios.get('https://testcarthaplay.onrender.com/api/question/questions'); 
         console.log(response.data.data)
         setQuestions(response.data.data);
 

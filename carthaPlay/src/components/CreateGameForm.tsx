@@ -51,7 +51,7 @@ export const CreateGameForm = () => {
     e.preventDefault();
     if (step === 2) {
       try {
-        const response = await fetch('http://localhost:5000/api/question/questions', {
+        const response = await fetch('https://testcarthaplay.onrender.com/api/question/questions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ questions }),
@@ -94,7 +94,7 @@ export const CreateGameForm = () => {
         userId, 
       };
   
-      const response = await axios.post(`http://localhost:5000/api/games-with-questions`, gameData);
+      const response = await axios.post(`https://testcarthaplay.onrender.com/api/games-with-questions`, gameData);
   
       if (response.status === 201) {
         alert('Game and questions submitted successfully!');

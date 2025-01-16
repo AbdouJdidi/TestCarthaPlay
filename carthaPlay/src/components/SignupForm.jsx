@@ -27,7 +27,7 @@ const SignupForm = ({ role }) => {
       setLoading(true);  // Set loading state to true
 
       // Send the signup request to the backend API
-      const response = await fetch('http://localhost:5000/api/signup', {
+      const response = await fetch('https://testcarthaplay.onrender.com/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

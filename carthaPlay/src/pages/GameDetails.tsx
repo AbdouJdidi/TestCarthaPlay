@@ -9,7 +9,7 @@ interface Question {
   correctAnswer: string;
 }
 
-const API_URL = 'http://localhost:5000/api'; // Replace with your backend URL
+const API_URL = 'https://testcarthaplay.onrender.com/api'; // Replace with your backend URL
 
 function GamesDetails() {
   const { gameId } = useParams<{ gameId: string }>();
