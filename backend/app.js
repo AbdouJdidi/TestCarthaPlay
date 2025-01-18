@@ -1,6 +1,7 @@
 
 const express = require('express');
 require('dotenv').config();
+const bcrypt = require('bcrypt');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const QuestionRoutes = require('./routes/QuestionRoutes')
@@ -23,76 +24,69 @@ app.use(cors());
 app.use('/api/auth', authRoutes);
 app.use('/api/question', QuestionRoutes);
 app.use('/api/game', gameRoutes);
-app.post('/api/signup', async (req, res) => {
-  const { username, email, password, role } = req.body;  // Get data from the request body
 
-  // Ensure that email, password, and role are provided
+app.post('/api/signup', async (req, res) => {
+  const { username, email, password, role } = req.body;
+
   if (!username || !email || !password || !role) {
-    return res.status(400).json({ error: 'Email, password, and role are required' });
+    return res.status(400).json({ error: 'Username, email, password, and role are required' });
   }
 
   try {
-    // Step 1: Insert the user into the "users" table
+    // Step 1: Hash the password
+    const saltRounds = 10; // Number of salt rounds for hashing
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Step 2: Insert the user into the "users" table
     const { data: userData, error: dbError } = await supabase
       .from('users')
       .insert([
         {
           username,
           email,
-          password,  // Insert the plain password (not hashed)
+          password: hashedPassword, // Store the hashed password
           role,
         },
       ])
-      .select();  // Get the inserted user data
+      .select();
 
     if (dbError) {
       return res.status(400).json({ error: dbError.message });
     }
 
-    const user = userData[0]; // Get the user from the returned data
+    const user = userData[0];
 
-    // Step 2: Depending on the role, insert into the "teachers" or "students" table
+    // Step 3: Insert into the "teachers" or "students" table based on role
     if (role === 'teacher') {
       const { data: teacherData, error: teacherError } = await supabase
         .from('teachers')
-        .insert([
-          {
-            user_id: user.id,  // Link the teacher's user_id with the user's id from the "users" table
-          },
-        ])
+        .insert([{ user_id: user.id }])
         .select();
 
       if (teacherError) {
         return res.status(400).json({ error: teacherError.message });
       }
 
-      // Send back success response for teacher
       return res.status(201).json({
         message: 'Teacher created successfully',
-        user: user,
-        teacher: teacherData[0],  // Include the inserted teacher data
+        user,
+        teacher: teacherData[0],
       });
     } else if (role === 'student') {
       const { data: studentData, error: studentError } = await supabase
         .from('students')
-        .insert([
-          {
-            user_id: user.id,  // Link the student's user_id with the user's id from the "users" table
-          },
-        ]);
+        .insert([{ user_id: user.id }]);
 
       if (studentError) {
         return res.status(400).json({ error: studentError.message });
       }
 
-      // Send back success response for student
       return res.status(201).json({
         message: 'Student created successfully',
-        user: user,
-        student: studentData[0],  // Include the inserted student data
+        user,
+        student: studentData[0],
       });
     } else {
-      // If role is not recognized
       return res.status(400).json({ error: 'Invalid role provided' });
     }
   } catch (err) {
@@ -102,49 +96,47 @@ app.post('/api/signup', async (req, res) => {
 });
 
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;  // Get data from the request body
+  const { email, password } = req.body;
 
-  // Ensure that email and password are provided
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
   try {
-    // Step 1: Check if the user exists in the "users" table
+    // Step 1: Check if the user exists
     const { data: userData, error: userError } = await supabase
       .from('users')
       .select('*')
-      .eq('email', email)  // Find user by email
-      .single();  // Get a single row (user)
+      .eq('email', email)
+      .single();
 
     if (userError || !userData) {
       return res.status(400).json({ error: 'User not found' });
     }
 
-    // Step 2: Verify the password (plain text comparison - in production, hash comparison is recommended)
-    if (userData.password !== password) {
+    // Step 2: Compare the provided password with the hashed password
+    const isPasswordValid = await bcrypt.compare(password, userData.password);
+
+    if (!isPasswordValid) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Step 3: Fetch the user's role from the "users" table (it's already in userData)
-    const role = userData.role;
-
-    // Step 4: Generate a JWT token
+    // Step 3: Generate a JWT token
     const token = jwt.sign(
-      { id: userData.id, email: userData.email, role: role },
-      process.env.JWT_SECRET, // Secret key for signing the token, store this securely
-      { expiresIn: '1h' } // Set token expiration time
+      { id: userData.id, email: userData.email, role: userData.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
     );
 
-    // Step 5: Send back the user data, role, and the token
+    // Step 4: Respond with user details and the token
     res.status(200).json({
       message: 'Login successful',
-      token: token, // Send the token
+      token,
       user: {
         id: userData.id,
         username: userData.username,
         email: userData.email,
-        role: role,  // Send the role
+        role: userData.role,
       },
     });
   } catch (err) {
@@ -152,6 +144,7 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 app.get('/api/questions', async (req, res) => {
     try {
