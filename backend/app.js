@@ -21,6 +21,10 @@ const cors = require('cors');
 connectDB();
 app.use(express.json());
 app.use(cors());
+app.use((req, res, next) => {
+  console.log(`Received ${req.method} request at ${req.originalUrl}`);
+  next(); // Pass the request to the next middleware or route handler
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/question', QuestionRoutes);
 app.use('/api/game', gameRoutes);
@@ -380,6 +384,7 @@ app.get('/api/questions', async (req, res) => {
           .insert([
             {
               question: questionData.question,
+              level : questionData.level,
               correct_answer: questionData.correctAnswer,
               game_id: gameId,
             },
@@ -395,18 +400,26 @@ app.get('/api/questions', async (req, res) => {
         insertedQuestions.push(question);
   
         for (const option of questionData.options) {
+          const isCorrect = option === questionData.correctAnswer
           const { error: answerError } = await supabase
             .from('answers')
             .insert([
               {
                 text: option ,
+                isCorrect: isCorrect,
                 question_id: question.id,
+                
               },
             ]);
   
-          if (answerError) {
-            console.error('Error inserting answer:', answerError);
-          }
+            if (answerError) {
+              console.error('Failed to insert answer:', {
+                text: option,
+                question_id: question.id,
+                isCorrect: isCorrect,
+                error: answerError.message,
+              });
+            }
         }
       }
   
@@ -420,6 +433,64 @@ app.get('/api/questions', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+
+  app.delete('/api/games/:gameId', async (req, res) => {
+    const { gameId } = req.params;
+  
+    try {
+      // Step 1: Retrieve all question IDs associated with the game
+      const { data: questions, error: questionsError } = await supabase
+        .from('questions')
+        .select('id')
+        .eq('game_id', gameId);
+  
+      if (questionsError) {
+        return res.status(400).json({ error: 'Failed to retrieve questions for the game' });
+      }
+  
+      if (!questions || questions.length === 0) {
+        return res.status(404).json({ error: 'No questions found for the provided game ID' });
+      }
+  
+      const questionIds = questions.map((q) => q.id);
+  
+      // Step 2: Delete all answers associated with the questions
+      const { error: answersError } = await supabase
+        .from('answers')
+        .delete()
+        .in('question_id', questionIds);
+  
+      if (answersError) {
+        return res.status(400).json({ error: 'Failed to delete answers for the questions' });
+      }
+  
+      // Step 3: Delete all questions associated with the game
+      const { error: deleteQuestionsError } = await supabase
+        .from('questions')
+        .delete()
+        .eq('game_id', gameId);
+  
+      if (deleteQuestionsError) {
+        return res.status(400).json({ error: 'Failed to delete questions for the game' });
+      }
+  
+      // Step 4: Delete the game
+      const { error: deleteGameError } = await supabase
+        .from('games')
+        .delete()
+        .eq('id', gameId);
+  
+      if (deleteGameError) {
+        return res.status(400).json({ error: 'Failed to delete the game' });
+      }
+  
+      res.status(200).json({ message: 'Game and its related data deleted successfully' });
+    } catch (error) {
+      console.error('Server error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
   
   
   app.put('/api/questions/:id', async (req, res) => {
@@ -438,7 +509,6 @@ app.get('/api/questions', async (req, res) => {
         return res.status(400).json({ error: error.message });
       }
   
-      // Return the updated question data
       res.status(200).json(questionData[0]);
     } catch (err) {
       res.status(500).json({ error: 'Internal server error' });
@@ -450,7 +520,6 @@ app.get('/api/questions', async (req, res) => {
     const { gameId } = req.params;
     console.log(gameId);
     try {
-      // Fetch questions for the specified game ID
       const { data: questions, error: questionsError } = await supabase
         .from('questions')
         .select('id, question, correct_answer')
@@ -460,18 +529,16 @@ app.get('/api/questions', async (req, res) => {
         return res.status(400).json({ error: questionsError.message });
       }
   
-      // Fetch answers for the questions
       const questionIds = questions.map((q) => q.id);
       const { data: answers, error: answersError } = await supabase
         .from('answers')
-        .select('id, text, question_id')
+        .select('id, text,isCorrect, question_id')
         .in('question_id', questionIds);
   
       if (answersError) {
         return res.status(400).json({ error: answersError.message });
       }
   
-      // Combine questions with their answers
       const questionsWithAnswers = questions.map((question) => ({
         ...question,
         options: answers
@@ -479,6 +546,7 @@ app.get('/api/questions', async (req, res) => {
           .map((answer) => ({
             id: answer.id,
             text: answer.text,
+            isCorrect : answer.isCorrect,
           })),
       }));
   
@@ -511,8 +579,62 @@ app.get('/api/questions', async (req, res) => {
     }
   });
   
+  app.put('/api/questions/:questionId/correct', async (req, res) => {
+    const questionId = req.params.questionId;
+    const { correct_answer } = req.body;
+    console.log(`Setting correct answer for question ID: ${questionId}`);
   
+    if (!correct_answer) {
+      return res.status(400).json({ error: 'Correct answer is required' });
+    }
   
+    try {
+      // Update the correct_answer in the questions table
+      const { data: questionData, error: questionError } = await supabase
+        .from('questions')
+        .update({ correct_answer })
+        .eq('id', questionId)
+        .select()
+        .single();
+  
+      if (questionError) {
+        throw questionError;
+      }
+  
+      if (!questionData) {
+        return res.status(404).json({ error: 'Question not found' });
+      }
+  
+      console.log(`Correct answer updated for question ID: ${questionId}`);
+  
+      // Update the isCorrect field in the answers table
+      const { error: answersError } = await supabase
+        .from('answers')
+        .update({ isCorrect: false }) // Set all answers to false first
+        .eq('question_id', questionId);
+  
+      if (answersError) {
+        throw answersError;
+      }
+  
+      const { error: correctAnswerError } = await supabase
+        .from('answers')
+        .update({ isCorrect: true }) // Set isCorrect to true for the correct answer
+        .eq('question_id', questionId)
+        .eq('text', correct_answer);
+  
+      if (correctAnswerError) {
+        throw correctAnswerError;
+      }
+  
+      res.status(200).json({
+        message: 'Correct answer updated successfully, and answer correctness adjusted',
+      });
+    } catch (err) {
+      console.error('Error updating correct answer:', err.message);
+      res.status(500).json({ error: 'Failed to update correct answer and answer correctness' });
+    }
+  });
   
   
   
