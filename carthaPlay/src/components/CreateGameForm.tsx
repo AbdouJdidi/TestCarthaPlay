@@ -7,16 +7,28 @@ import { jwtDecode } from 'jwt-decode';
 interface Question {
   id: string;
   question: string;
+  level: number;
   options: string[];
   correctAnswer: string;
+  order : number ; 
+
 }
+interface Information {
+  id : string ; 
+  info: string;
+  level:number ,
+  order : number ;
+}
+
 interface TokenPayload {
   id: string; 
   email: string;
   role: string;
 }
-
+type Item = Information | Question ; 
 export const CreateGameForm = () => {
+  let questionCounter = 1;
+  let infoCounter = 1;
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -25,23 +37,41 @@ export const CreateGameForm = () => {
     difficulty: '',
     level: '',
   });
+  const [item,setItem] = useState<Item[]>([])
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
     id: '',
     question: '',
+    level : 0,
     options: ['', '', '',],
     correctAnswer: '',
+    order : 0 ,
   });
+  const [informations, setInformations] = useState<Information[]>([])
+  const [currentInformation,setCurrentInformation] = useState<Information>({
+    id : '',
+    info : '' ,
+    level: 0 ,
+    order : 0 ,
+
+  })
   const [userId, setUserId] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [order, setOrder] = useState(1) ;
+
+  const handleClick = () => {
+    setIsDisabled(true);
+    console.log("Button clicked!");
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token'); // Retrieve the token from localStorage
     if (token) {
       try {
         const decoded: TokenPayload = jwtDecode(token);
-        setUserId(decoded.id); // Access the user ID
-        setRole(decoded.role); // Access the role
+        setUserId(decoded.id); 
+        setRole(decoded.role); 
       } catch (err) {
         console.error('Error decoding token:', err);
       }
@@ -75,22 +105,55 @@ export const CreateGameForm = () => {
   
 
   const addQuestion = () => {
-    if (currentQuestion.question && currentQuestion.options.every(opt => opt) && currentQuestion.correctAnswer) {
-      setQuestions([...questions, { ...currentQuestion, id: Date.now().toString() }]);
+    console.log(currentQuestion.level)
+    console.log("worked")
+    if (currentQuestion.question && currentQuestion.options.every(opt => opt) && currentQuestion.correctAnswer && currentQuestion.level) {
+      const newQuestion = {
+        ...currentQuestion,
+        id: Date.now().toString(),
+        order: order ,
+      };
+      setQuestions([...questions, newQuestion]);
       setCurrentQuestion({
         id: '',
         question: '',
+        level : 0,
         options: ['', '', ''],
         correctAnswer: '',
+        order : 0 ,
       });
+      setOrder((prev)=> prev+1)
+      setItem([...item,{...currentQuestion ,  id: Date.now().toString() }])
     }
   };
+
+
+  const addInformation = () => {
+      if (currentInformation.info) {
+        const newInfo = {
+          ...currentInformation,
+          id: Date.now().toString(),
+          order: order ,
+        };
+        setInformations([...informations, newInfo]);
+        setCurrentInformation({
+          id: '',
+          info: '',
+          level : 0 , 
+          order : 0 ,
+        });
+        setItem([...item,{...currentInformation ,  id: Date.now().toString() }]);
+        setOrder((prev)=>prev + 1)
+      }
+  };
+  
   const handleGameWithQuestionsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const gameData = {
         ...formData,
-        questions, 
+        questions,
+        informations, 
         userId, 
       };
   
@@ -216,34 +279,56 @@ export const CreateGameForm = () => {
           <div className="space-y-8">
             {/* Questions List */}
             <div className="space-y-4">
-              {questions.map((q, index) => (
-                <div key={q.id} className="bg-gray-50 rounded-xl p-4 relative group">
-                  <button
-                    onClick={() => removeQuestion(q.id)}
-                    className="absolute right-2 top-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                  <h4 className="font-medium text-gray-900 mb-2">Question {index + 1}</h4>
-                  <p className="text-gray-600 mb-2">{q.question}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {q.options.map((option, i) => (
-                      <div
-                        key={i}
-                        className={`p-2 rounded-lg text-sm ${
-                          option === q.correctAnswer
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {option}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            
+    {item.map((q, index) => {
+      
 
+      return (
+        <div key={q.id} className="bg-gray-50 rounded-xl p-4 relative group">
+          <button
+            onClick={() => removeQuestion(q.id)}
+            className="absolute right-2 top-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          {/* Common Header for Both */}
+          <h4 className="font-medium text-gray-900 mb-2">
+            {q.hasOwnProperty('question') ? `Question ${questionCounter++}` : `Information ${infoCounter++}`}
+          </h4>
+
+          {/* Conditionally Render Content */}
+          {'question' in q ? (
+            <>
+              {/* Render Question */}
+              <p className="text-gray-600 mb-2">{q.question}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {q.options.map((option, i) => (
+                  <div
+                    key={i}
+                    className={`p-2 rounded-lg text-sm ${
+                      option === q.correctAnswer
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}
+                  >
+                    {option}
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Render Information */}
+              <div className="p-2 rounded-lg bg-gray-100 text-gray-600">
+                {q.info}
+              </div>
+            </>
+          )}
+        </div>
+      );
+    })}
+  </div>
             {/* Add New Question Form */}
             <div className="bg-white rounded-xl p-6 border-2 border-dashed border-gray-200 hover:border-indigo-300 transition-colors duration-200">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Nouvelle Question</h3>
@@ -258,6 +343,22 @@ export const CreateGameForm = () => {
                     placeholder="Entrez votre question"
                   />
                 </div>
+                <div className="relative group">
+                  <Target className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
+                  <label className="form-label">Niveau de difficulté</label>
+                  <select
+                    value={currentQuestion.level ? currentQuestion.level : "select"}
+                    onChange={(e) => setCurrentQuestion({...currentQuestion , level : Number(e.target.value)})}
+                    className="form-select pl-12"
+                    required
+                  >
+                    <option value="">Sélectionner le niveau d'apparition</option>
+
+                    <option value="1">Niveau 1</option>
+                    <option value="2">Niveau 2</option>
+                    <option value="3">Niveau 3</option>
+                  </select>
+              </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   {currentQuestion.options.map((option, index) => (
@@ -303,6 +404,49 @@ export const CreateGameForm = () => {
               </div>
             </div>
 
+            {/* Add New Information Form */}
+            <div className="bg-white rounded-xl p-6 border-2 border-dashed border-gray-200 hover:border-indigo-300 transition-colors duration-200">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Nouvelle Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="form-label">Information</label>
+                  <input
+                    type="text"
+                    value={currentInformation.info}
+                    onChange={(e) => setCurrentInformation({ ...currentInformation, info: e.target.value })}
+                    className="form-input"
+                    placeholder="Entrez votre question"
+                  />
+                </div>
+
+                <div className="relative group">
+                  <Target className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
+                  <label className="form-label">Niveau de difficulté</label>
+                  <select
+                    value={currentInformation.level ? currentInformation.level : "select"}
+                    onChange={(e) => setCurrentInformation({...currentInformation , level : Number(e.target.value)})}
+                    className="form-select pl-12"
+                    required
+                  >
+                    <option value="">Sélectionner le niveau d'apparition</option>
+
+                    <option value="1">Niveau 1</option>
+                    <option value="2">Niveau 2</option>
+                    <option value="3">Niveau 3</option>
+                  </select>
+              </div>
+
+                <button
+                  type="button"
+                  onClick={addInformation}
+                  className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors duration-200 flex items-center justify-center space-x-2"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span>Ajouter l'information</span>
+                </button>
+              </div>
+            </div>
+
             <div className="flex space-x-4">
               <button
                 type="button"
@@ -313,9 +457,10 @@ export const CreateGameForm = () => {
               </button>
               <button
                 type="button"
-                onClick={handleGameWithQuestionsSubmit}
+                onClick={(e)=>{handleClick() ; handleGameWithQuestionsSubmit(e)}}
                 className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
-                disabled={questions.length === 0}
+                disabled={questions.length === 0 || isDisabled}
+                 
               >
                 <Save className="mr-2 h-5 w-5" />
                 <span>Créer le jeu</span>

@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cors());
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request at ${req.originalUrl}`);
-  next(); // Pass the request to the next middleware or route handler
+  next();
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/question', QuestionRoutes);
@@ -341,7 +341,7 @@ app.get('/api/questions', async (req, res) => {
   });
   
   app.post('/api/games-with-questions', async (req, res) => {
-    const { userId, subject, lesson, difficulty, questions } = req.body;
+    const { userId, subject, lesson, difficulty, questions, informations } = req.body;
   
     try {
       // Step 1: Create Game
@@ -376,17 +376,20 @@ app.get('/api/questions', async (req, res) => {
   
       const gameId = gameData.id;
   
-      // Step 2: Add Questions and Answers
       const insertedQuestions = [];
+      const insertedInformations = [];
+      
       for (const questionData of questions) {
         const { data: question, error: questionError } = await supabase
           .from('questions')
           .insert([
             {
               question: questionData.question,
-              level : questionData.level,
+              level: questionData.level,
               correct_answer: questionData.correctAnswer,
+              order: questionData.order, 
               game_id: gameId,
+              
             },
           ])
           .select()
@@ -400,39 +403,63 @@ app.get('/api/questions', async (req, res) => {
         insertedQuestions.push(question);
   
         for (const option of questionData.options) {
-          const isCorrect = option === questionData.correctAnswer
+          const isCorrect = option === questionData.correctAnswer;
           const { error: answerError } = await supabase
             .from('answers')
             .insert([
               {
-                text: option ,
+                text: option,
                 isCorrect: isCorrect,
                 question_id: question.id,
-                
               },
             ]);
   
-            if (answerError) {
-              console.error('Failed to insert answer:', {
-                text: option,
-                question_id: question.id,
-                isCorrect: isCorrect,
-                error: answerError.message,
-              });
-            }
+          if (answerError) {
+            console.error('Failed to insert answer:', {
+              text: option,
+              question_id: question.id,
+              isCorrect: isCorrect,
+              error: answerError.message,
+            });
+          }
         }
       }
   
+      for (const infoData of informations) {
+        const { data: info, error: infoError } = await supabase
+          .from('informations')
+          .insert([
+            {
+              info: infoData.info,
+              level : infoData.level,
+              order: infoData.order,
+              game_id: gameId,
+              
+            },
+          ])
+          .select()
+          .single();
+  
+        if (infoError) {
+          console.error('Error inserting information:', infoError);
+          continue;
+        }
+  
+        insertedInformations.push(info);
+      }
+  
       res.status(201).json({
-        message: 'Game and questions created successfully',
+        message: 'Game, questions, and information created successfully',
         game: gameData,
         questions: insertedQuestions,
+        informations: insertedInformations,
       });
     } catch (error) {
       console.error('Server error:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+  
 
   app.delete('/api/games/:gameId', async (req, res) => {
     const { gameId } = req.params;
@@ -495,13 +522,12 @@ app.get('/api/questions', async (req, res) => {
   
   app.put('/api/questions/:id', async (req, res) => {
     const { id } = req.params;
-    const { question } = req.body; // Extract the updated question text from the request body
+    const { question } = req.body; 
   
     try {
-      // Update the question in the database
       const { data : questionData, error } = await supabase
         .from('questions')
-        .update({ question }) // Update the `question` field in the database
+        .update({ question }) 
         .eq('id', id)
         .select();
   
@@ -636,7 +662,120 @@ app.get('/api/questions', async (req, res) => {
     }
   });
   
+  app.get('/api/games-with-questions/:gameId', async (req, res) => {
+    const { gameId } = req.params;
   
+    try {
+      // Step 1: Fetch game details
+      const { data: game, error: gameError } = await supabase
+        .from('games')
+        .select('*')
+        .eq('id', gameId)
+        .single();
+  
+      if (gameError || !game) {
+        return res.status(404).json({ error: 'Game not found' });
+      }
+  
+      // Step 2: Fetch questions related to the game
+      const { data: questions, error: questionError } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('game_id', gameId)
+        .order('order', { ascending: true }); // Order questions properly
+  
+      if (questionError) {
+        return res.status(400).json({ error: questionError.message });
+      }
+  
+      // Step 3: Fetch answers for each question
+      for (let question of questions) {
+        const { data: options, error: answerError } = await supabase
+          .from('answers')
+          .select('*')
+          .eq('question_id', question.id);
+  
+        if (answerError) {
+          console.error('Error fetching answers for question:', answerError);
+          question.options = [];
+        } else {
+          question.options = options;
+        }
+      }
+  
+      // Step 4: Fetch informations related to the game
+      const { data: informations, error: infoError } = await supabase
+        .from('informations')
+        .select('*')
+        .eq('game_id', gameId)
+        .order('order', { ascending: true }); // Order informations properly
+  
+      if (infoError) {
+        return res.status(400).json({ error: infoError.message });
+      }
+  
+      // Step 5: Merge questions and informations into a single ordered array
+      const combinedData = [...questions, ...informations].sort((a, b) => a.order - b.order);
+  
+      // Step 6: Return structured data
+      res.status(200).json({
+        game,
+        content: combinedData, // Ordered list of questions & informations
+      });
+    } catch (error) {
+      console.error('Server error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  app.post("/api/update-order", async (req, res) => {
+    const { updatedOrder } = req.body;
+    console.log(req.body)
+  
+    try {
+      console.log(updatedOrder)
+      const updates = updatedOrder.map((item) =>
+        supabase
+          .from(item.table)
+          .update({ order: item.order })
+          .eq("id", item.id)
+      );
+  
+      const results = await Promise.all(updates);
+  
+      // Check for errors
+      if (results.some(({ error }) => error)) {
+        return res.status(500).json({ message: "Error updating order", results });
+      }
+  
+      res.json({ message: "Order updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
+    }
+  });
+  
+  app.put('/api/informations/:id', async (req, res) => {
+    const { id } = req.params;
+    const { info } = req.body; 
+    console.log(info)
+  
+    try {
+      const { data: infoData, error } = await supabase
+        .from('informations')
+        .update({ info })
+        .eq('id', id)
+        .select();
+  
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+  
+      res.status(200).json(infoData[0]);
+    } catch (err) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
   
 
 

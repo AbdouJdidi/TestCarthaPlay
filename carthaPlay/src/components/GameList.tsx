@@ -44,7 +44,13 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
   }, [userId]);
   
 
-  
+  const handleDelete = async (gameId : number) =>{
+
+    const res =await axios.delete(`https://testcarthaplay.onrender.com/api/games/${gameId}`)
+    console.log(res)
+    setGames((prevGames) => prevGames.filter((game) => +game.id !== gameId));
+
+  }
 
   const filteredGames = games.filter(game =>
     game.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -125,18 +131,32 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
               </div>
 
               {selectedGame?.id === game.id && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(role === 'teacher' 
-                      ? `/teacher/games/${game.id}`
-                      : `/student/games/${game.id}`
-                    );
-                  }}
-                  className="mt-4 w-full py-2 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
-                >
-                  {role === 'teacher' ? 'Modifier le jeu' : 'Commencer à jouer'}
-                </button>
+                <div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(role === 'teacher' 
+                        ? `/teacher/games/${game.id}`
+                        : `/student/games/${game.id}`
+                      );
+                    }}
+                    className="mt-4 w-full py-2 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
+                  >
+                    {role === 'teacher' ? 'Modifier le jeu' : 'Commencer à jouer'}
+                  </button>
+
+                  <button 
+                      onClick={() => handleDelete(+game.id)}
+
+                      className="mt-4 w-full py-2 px-4 bg-white border  from-indigo-600 to-purple-600 text-gradient-to-r rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
+                  > 
+                        delete game
+                  </button>
+
+                </div>
+                
+                
               )}
             </div>
           ))}
