@@ -345,14 +345,14 @@ export const CreateGameForm = () => {
                 </div>
                 <div className="relative group">
                   <Target className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
-                  <label className="form-label">Niveau de difficulté</label>
+                  <label className="form-label">Niveau d'apparition</label>
                   <select
                     value={currentQuestion.level ? currentQuestion.level : "select"}
                     onChange={(e) => setCurrentQuestion({...currentQuestion , level : Number(e.target.value)})}
                     className="form-select pl-12"
                     required
                   >
-                    <option value="">Sélectionner le niveau d'apparition</option>
+                    <option value="">Sélectionner un niveau</option>
 
                     <option value="1">Niveau 1</option>
                     <option value="2">Niveau 2</option>
@@ -421,14 +421,14 @@ export const CreateGameForm = () => {
 
                 <div className="relative group">
                   <Target className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
-                  <label className="form-label">Niveau de difficulté</label>
+                  <label className="form-label">Niveau d'apparition</label>
                   <select
                     value={currentInformation.level ? currentInformation.level : "select"}
                     onChange={(e) => setCurrentInformation({...currentInformation , level : Number(e.target.value)})}
                     className="form-select pl-12"
                     required
                   >
-                    <option value="">Sélectionner le niveau d'apparition</option>
+                    <option value="">Sélectionner un niveau</option>
 
                     <option value="1">Niveau 1</option>
                     <option value="2">Niveau 2</option>
