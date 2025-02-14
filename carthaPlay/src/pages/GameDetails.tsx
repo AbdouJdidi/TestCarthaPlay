@@ -21,7 +21,7 @@ interface Information {
 
 type Items = Information | Question ; 
 
-const API_URL = 'https://testcarthaplay.onrender.com';
+const API_URL = 'https://testcarthaplay.onrender.com/api';
 
 function GamesDetails() {
   const newGroupedLevels: Record<number, { questions: Question[]; informations: Information[] }> = {};
