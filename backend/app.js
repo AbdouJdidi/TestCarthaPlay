@@ -17,39 +17,50 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const app = express();
 const cors = require('cors');
 
+
 connectDB();
 app.use(express.json());
-const allowedOrigins = [
-  "http://localhost:5173", // Allow local development
-  "https://carthaplay1.vercel.app" // Allow deployed frontend
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: "GET, POST, OPTIONS, PUT, DELETE",
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true // Allow cookies or auth headers
-}));
-
-app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.sendStatus(200);
-});
+app.use(cors());
 
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request at ${req.originalUrl}`);
-  next();
+  next(); 
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/question', QuestionRoutes);
 app.use('/api/game', gameRoutes);
+
+function generateGameCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 5; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+const generateClassroomCode = async () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code;
+  let existingClassroom;
+  do {
+    code = Array(5)
+      .fill(null)
+      .map(() => characters.charAt(Math.floor(Math.random() * characters.length)))
+      .join('');
+
+    const { data } = await supabase
+      .from('classroom')
+      .select('id')
+      .eq('code', code)
+      .single();
+
+    existingClassroom = data; 
+  } while (existingClassroom);
+
+  return code;
+};
+
 
 app.post('/api/signup', async (req, res) => {
   const { username, email, password, role } = req.body;
@@ -59,18 +70,16 @@ app.post('/api/signup', async (req, res) => {
   }
 
   try {
-    // Step 1: Hash the password
-    const saltRounds = 10; // Number of salt rounds for hashing
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Step 2: Insert the user into the "users" table
     const { data: userData, error: dbError } = await supabase
       .from('users')
       .insert([
         {
           username,
           email,
-          password: hashedPassword, // Store the hashed password
+          password: hashedPassword,
           role,
         },
       ])
@@ -82,7 +91,6 @@ app.post('/api/signup', async (req, res) => {
 
     const user = userData[0];
 
-    // Step 3: Insert into the "teachers" or "students" table based on role
     if (role === 'teacher') {
       const { data: teacherData, error: teacherError } = await supabase
         .from('teachers')
@@ -99,9 +107,26 @@ app.post('/api/signup', async (req, res) => {
         teacher: teacherData[0],
       });
     } else if (role === 'student') {
+      let isUnique = false;
+      let studentCode;
+
+      while (!isUnique) {
+        studentCode = generateGameCode(); // Using your function to generate the student code
+        const { data: existingStudent } = await supabase
+          .from('students')
+          .select('id')
+          .eq('student_code', studentCode)
+          .maybeSingle();
+
+        if (!existingStudent) {
+          isUnique = true;
+        }
+      }
+
       const { data: studentData, error: studentError } = await supabase
         .from('students')
-        .insert([{ user_id: user.id }]);
+        .insert([{ user_id: user.id, student_code: studentCode }])
+        .select();
 
       if (studentError) {
         return res.status(400).json({ error: studentError.message });
@@ -120,6 +145,7 @@ app.post('/api/signup', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
@@ -216,7 +242,7 @@ app.get('/api/questions', async (req, res) => {
 
   app.post('/api/games', async (req, res) => {
     try {
-      const { userId ,subject, lesson, difficulty } = req.body; // Extract data from the request body
+      const { userId ,subject, lesson, difficulty } = req.body; 
         if (!subject || !lesson || !difficulty) {
         return res.status(400).json({ error: 'All fields are required' });
       }
@@ -366,7 +392,6 @@ app.get('/api/questions', async (req, res) => {
     const { userId, subject, lesson, difficulty, questions, informations } = req.body;
   
     try {
-      // Step 1: Create Game
       const { data: teacherData, error: teacherError } = await supabase
         .from('teachers')
         .select('id')
@@ -378,6 +403,21 @@ app.get('/api/questions', async (req, res) => {
       }
   
       const teacher_id = teacherData.id;
+    let gameCode;
+    let isUnique = false;
+
+    while (!isUnique) {
+      gameCode = generateGameCode();
+      const { data: existingGame } = await supabase
+        .from('games')
+        .select('id')
+        .eq('game_code', gameCode)
+        .maybeSingle();
+      
+      if (!existingGame) {
+        isUnique = true; 
+      }
+    }
   
       const { data: gameData, error: gameError } = await supabase
         .from('games')
@@ -386,6 +426,7 @@ app.get('/api/questions', async (req, res) => {
             subject,
             lesson,
             difficulty,
+            game_code: gameCode,
             teacher_id,
           },
         ])
@@ -776,7 +817,7 @@ app.get('/api/questions', async (req, res) => {
     }
   });
   
-  app.put('/api/informations/:id', async (req, res) => {
+app.put('/api/informations/:id', async (req, res) => {
     const { id } = req.params;
     const { info } = req.body; 
     console.log(info)
@@ -797,6 +838,7 @@ app.get('/api/questions', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 app.post('/api/create-classroom', async (req, res) => {
   const { teacherId, classroomName } = req.body;
 
@@ -1196,8 +1238,6 @@ app.get('/api/classrooms/:studentId', async (req, res) => {
   }
 });
 
-
-  
 
 
 
