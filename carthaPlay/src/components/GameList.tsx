@@ -4,6 +4,8 @@ import { Game } from '../types';
 import { BookOpen, GraduationCap, Target, Plus, Search } from 'lucide-react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { IoKeyOutline } from "react-icons/io5";
+
 
 interface GameListProps {
   role: 'teacher' | 'student';
@@ -32,7 +34,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
         const userId = decoded.id;
         setUserId(userId);
   
-        const response = await axios.get(`https://testcarthaplay.onrender.com/api/games/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/games/${userId}`);
         console.log(response);
         setGames(response.data.data);
       } catch (err) {
@@ -46,7 +48,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
 
   const handleDelete = async (gameId : number) =>{
 
-    const res =await axios.delete(`https://testcarthaplay.onrender.com/api/games/${gameId}`)
+    const res =await axios.delete(`http://localhost:5000/api/games/${gameId}`)
     console.log(res)
     setGames((prevGames) => prevGames.filter((game) => +game.id !== gameId));
 
@@ -93,7 +95,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
           {filteredGames.map((game) => (
             <div
               key={game.id}
-              className={`relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
+              className={`relative bg-white/80 will-change-transform  rounded-2xl shadow-lg p-6 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
                 selectedGame?.id === game.id ? 'ring-2 ring-indigo-600' : ''
               }`}
               onClick={() => setSelectedGame(game)}
@@ -127,6 +129,10 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
                 <div className="flex items-center text-sm text-gray-600">
                   <Target className="h-4 w-4 mr-2" />
                   {game.lesson}
+                </div>
+                <div className="flex items-center text-sm font-bold text-gray-600">
+                  <IoKeyOutline className="h-4 w-4 mr-2" />
+                  {game.game_code}
                 </div>
               </div>
 

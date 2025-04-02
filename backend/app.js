@@ -17,16 +17,32 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const app = express();
 const cors = require('cors');
 
-
 connectDB();
 app.use(express.json());
-app.use(cors());
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://carthaplay1.vercel.app");
+const allowedOrigins = [
+  "http://localhost:5173", // Allow local development
+  "https://carthaplay1.vercel.app" // Allow deployed frontend
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET, POST, OPTIONS, PUT, DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true // Allow cookies or auth headers
+}));
+
+app.options("*", (req, res) => {
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
+  res.sendStatus(200);
 });
+
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request at ${req.originalUrl}`);
   next();
@@ -781,6 +797,405 @@ app.get('/api/questions', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
 });
+app.post('/api/create-classroom', async (req, res) => {
+  const { teacherId, classroomName } = req.body;
+
+  if (!teacherId || !classroomName) {
+    return res.status(400).json({ error: 'Teacher ID and classroom name are required' });
+  }
+
+  try {
+    const classroomCode = await generateClassroomCode();
+
+    const { data: newClassroom, error: classroomError } = await supabase
+      .from('classroom')
+      .insert([{ name: classroomName, teacher_id: teacherId, code: classroomCode }])
+      .select()
+      .single();
+
+    if (classroomError) {
+      return res.status(400).json({ error: classroomError.message });
+    }
+
+    res.status(201).json({ message: 'Classroom created successfully', classroom: newClassroom });
+
+  } catch (error) {
+    console.error('Error creating classroom:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});  
+
+app.post('/api/add-student', async (req, res) => {
+  const { studentId, classroomCode } = req.body;
+
+  if (!studentId || !classroomCode) {
+    return res.status(400).json({ error: 'Student ID and classroom code are required' });
+  }
+
+  try {
+    // Get the student ID from the students table
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .select('id')
+      .eq('user_id', studentId)
+      .single();
+
+    if (studentError || !student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    // Get the classroom ID from the classroom table
+    const { data: classroom, error: classroomError } = await supabase
+      .from('classroom')
+      .select('id')
+      .eq('code', classroomCode)
+      .single();
+
+    if (classroomError || !classroom) {
+      return res.status(404).json({ error: 'Classroom not found' });
+    }
+
+    // Insert into rel_student_classroom table
+    const { error: relationError } = await supabase
+      .from('rel_student_classroom')
+      .insert([{ classroom_id: classroom.id, student_id: student.id }]);
+
+    if (relationError) {
+      return res.status(400).json({ error: relationError.message });
+    }
+
+    res.status(201).json({ message: 'Student added to classroom successfully' });
+
+  } catch (error) {
+    console.error('Error adding student:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.delete('/api/remove-student', async (req, res) => {
+  const { studentId, classroomId } = req.body;
+
+  if (!studentId || !classroomId) {
+    return res.status(400).json({ error: 'Student ID and Classroom ID are required' });
+  }
+
+  try {
+    const { data: relation, error: relationError } = await supabase
+      .from('rel_student_classroom')
+      .select('id')
+      .eq('classroom_id', classroomId)
+      .eq('student_id', studentId)
+      .single();
+
+    if (relationError || !relation) {
+      return res.status(404).json({ error: 'Student is not in this classroom' });
+    }
+
+    // Step 2: Delete student from the classroom
+    const { error: deleteError } = await supabase
+      .from('rel_student_classroom')
+      .delete()
+      .eq('id', relation.id);
+
+    if (deleteError) {
+      return res.status(500).json({ error: 'Error removing student from classroom' });
+    }
+
+    res.status(200).json({ message: 'Student removed from classroom successfully' });
+
+  } catch (error) {
+    console.error('Error removing student:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/classroom/:classroomId/students', async (req, res) => {
+  const { classroomId } = req.params;
+
+  try {
+    const { data: studentRecords, error: studentError } = await supabase
+      .from('rel_student_classroom')
+      .select('student_id')
+      .eq('classroom_id', classroomId);
+
+    if (studentError) {
+      return res.status(400).json({ error: studentError.message });
+    }
+
+    if (!studentRecords.length) {
+      return res.status(404).json({ error: 'No students found in this classroom' });
+    }
+    
+
+    const studentIds = studentRecords.map(record => record.student_id);
+
+    const { data: studentsData, error: studentsError } = await supabase
+      .from('students')
+      .select('id, user_id')
+      .in('id', studentIds);
+
+    if (studentsError) {
+      return res.status(400).json({ error: studentsError.message });
+    }
+
+    const userIds = studentsData.map(student => student.user_id);
+
+    const { data: usersData, error: usersError } = await supabase
+      .from('users')
+      .select('id, username, email')
+      .in('id', userIds);
+
+    if (usersError) {
+      return res.status(400).json({ error: usersError.message });
+    }
+
+    const students = studentsData.map(student => {
+      const user = usersData.find(user => user.id === student.user_id);
+      return {
+        student_id: student.id,
+        user_id: student.user_id,
+        username: user?.username || 'Unknown',
+        email: user?.email || 'Unknown'
+      };
+    });
+
+    res.status(200).json({ students });
+
+  } catch (err) {
+    console.error('Error fetching students:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/game/:gameId/update', async (req, res) => {
+  const { gameId } = req.params;
+  const { questions, informations } = req.body;
+
+  if ((!questions || questions.length === 0) && (!informations || informations.length === 0)) {
+    return res.status(400).json({ error: 'No new questions or information provided' });
+  }
+
+  try {
+    // Get max order for questions in this game
+    const { data: maxQuestionOrderData, error: questionOrderError } = await supabase
+      .from('questions')
+      .select('order')
+      .eq('game_id', gameId)
+      .order('order', { ascending: false })
+      .limit(1);
+
+    if (questionOrderError) {
+      return res.status(400).json({ error: 'Failed to fetch max question order' });
+    }
+
+    const maxQuestionOrder = maxQuestionOrderData.length ? maxQuestionOrderData[0].order : 0;
+
+    // Get max order for informations in this game
+    const { data: maxInfoOrderData, error: infoOrderError } = await supabase
+      .from('informations')
+      .select('order')
+      .eq('game_id', gameId)
+      .order('order', { ascending: false })
+      .limit(1);
+
+    if (infoOrderError) {
+      return res.status(400).json({ error: 'Failed to fetch max information order' });
+    }
+
+
+    const maxInfoOrder = maxInfoOrderData.length ? maxInfoOrderData[0].order : 0;
+    console.log(maxInfoOrder)
+
+
+    // Insert new questions with updated order
+    for (const questionData of questions) {
+      const { data: question, error: questionError } = await supabase
+        .from('questions')
+        .insert([
+          {
+            question: questionData.question,
+            level: questionData.level,
+            correct_answer: questionData.correctAnswer,
+            order: maxQuestionOrder + questionData.order,
+            game_id: gameId,
+          },
+        ])
+        .select()
+        .single();
+
+      if (questionError) {
+        console.error('Error inserting question:', questionError);
+        continue;
+      }
+
+      for (const option of questionData.options) {
+        const isCorrect = option === questionData.correctAnswer;
+        const { error: answerError } = await supabase
+          .from('answers')
+          .insert([
+            {
+              text: option,
+              isCorrect: isCorrect,
+              question_id: question.id,
+            },
+          ]);
+
+        if (answerError) {
+          console.error('Failed to insert answer:', answerError);
+        }
+      }
+    }
+
+    // Insert new informations with updated order
+    for (const infoData of informations) {
+      const { error: infoError } = await supabase
+        .from('informations')
+        .insert([
+          {
+            info: infoData.info,
+            level: infoData.level,
+            order: maxInfoOrder + infoData.order,
+            game_id: gameId,
+          },
+        ]);
+
+      if (infoError) {
+        console.error('Error inserting information:', infoError);
+      }
+    }
+
+    res.status(201).json({ message: 'Game updated successfully!' });
+  } catch (err) {
+    console.error('Error updating game:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.get('/api/teacher/:teacherId/classrooms', async (req, res) => {
+  const { teacherId } = req.params;
+  console.log('Received GET request at /api/teacher/:teacherId/classrooms with teacherId:', teacherId);
+
+  if (!teacherId) {
+    console.log('Error: Teacher ID is missing');
+    return res.status(400).json({ error: 'Teacher ID is required' });
+  }
+
+  try {
+    console.log('Fetching classrooms for teacherId:', teacherId);
+
+    const { data: classrooms, error } = await supabase
+      .from('classroom')
+      .select('id, name, code')
+      .eq('teacher_id', teacherId);
+
+    if (error) {
+      console.log('Supabase Error:', error.message);
+      return res.status(400).json({ error: error.message });
+    }
+
+    console.log('Supabase returned classrooms:', classrooms);
+
+    if (!classrooms.length) {
+      console.log('No classrooms found for teacherId:', teacherId);
+      return res.status(404).json({ error: 'No classrooms found for this teacher' });
+    }
+
+    console.log('Returning classrooms:', classrooms);
+    res.status(200).json({ classrooms });
+
+  } catch (err) {
+    console.error('Unexpected error fetching classrooms:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/classrooms/:studentId', async (req, res) => {
+  const { studentId } = req.params;
+
+  if (!studentId) {
+    return res.status(400).json({ error: 'Student ID is required' });
+  }
+
+  try {
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .select('id')
+      .eq('user_id', studentId)
+      .single();
+
+    if (studentError || !student) {
+      console.error("Student not found error:", studentError);
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const { data: studentClassrooms, error: relError } = await supabase
+      .from('rel_student_classroom')
+      .select('classroom_id')
+      .eq('student_id', student.id);
+
+    if (relError || !studentClassrooms.length) {
+      console.error("Relational error:", relError);
+      return res.status(404).json({ error: 'No classrooms found for this student' });
+    }
+
+    const classroomIds = studentClassrooms.map((rel) => rel.classroom_id);
+
+    const { data: classrooms, error: classroomError } = await supabase
+      .from('classroom')
+      .select('id, name, teacher_id')
+      .in('id', classroomIds);
+
+    if (classroomError || !classrooms.length) {
+      console.error("Classroom error:", classroomError);
+      return res.status(500).json({ error: 'Error fetching classrooms' });
+    }
+
+    const teacherIds = classrooms.map((classroom) => classroom.teacher_id);
+    const { data: teachers, error: teacherError } = await supabase
+      .from('teachers')
+      .select('id, user_id')
+      .in('id', teacherIds);
+
+    if (teacherError) {
+      console.error("Teacher error:", teacherError);
+      return res.status(500).json({ error: 'Error fetching teachers' });
+    }
+
+    const teacherUserIds = teachers.map((teacher) => teacher.user_id);
+    const { data: users, error: userError } = await supabase
+      .from('users')
+      .select('id, username')
+      .in('id', teacherUserIds);
+
+    if (userError) {
+      console.error("User error:", userError);
+      return res.status(500).json({ error: 'Error fetching teacher names' });
+    }
+
+    const teacherNameMap = users.reduce((acc, user) => {
+      acc[user.id] = user.username;
+      return acc;
+    }, {});
+
+    const classroomsWithTeachers = classrooms.map((classroom) => {
+      const teacher = teachers.find((t) => t.id === classroom.teacher_id);
+      const teacherName = teacher ? teacherNameMap[teacher.user_id] : 'Unknown';
+      return {
+        ...classroom,
+        teacherName,
+      };
+    });
+
+    res.status(200).json({ classrooms: classroomsWithTeachers });
+
+  } catch (error) {
+    console.error('Error fetching classrooms:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
   
 

@@ -5,8 +5,10 @@ export interface Game {
   level: string;
   difficulty: 'easy' | 'medium' | 'hard';
   lesson: string;
+  game_code : string,
   teacherId: string;
 }
+
 
 export interface User {
   id: string;

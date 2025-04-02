@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { BookOpen, Target, School, Lightbulb, Plus, X, Save, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import Loading from './Loading';
 
 interface Question {
   id: string;
@@ -30,6 +34,7 @@ export const CreateGameForm = () => {
   let questionCounter = 1;
   let infoCounter = 1;
   const navigate = useNavigate();
+  const [loading,setLoading] = useState(false)
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     subject: '',
@@ -125,6 +130,19 @@ export const CreateGameForm = () => {
       setOrder((prev)=> prev+1)
       setItem([...item,{...currentQuestion ,  id: Date.now().toString() }])
     }
+    else {
+            console.log("fields not filled")
+            toast.error("All question fields are required!", {
+            position: "top-center",
+            autoClose: 3000, // Closes after 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+        });
+
+    }
   };
 
 
@@ -145,6 +163,18 @@ export const CreateGameForm = () => {
         setItem([...item,{...currentInformation ,  id: Date.now().toString() }]);
         setOrder((prev)=>prev + 1)
       }
+      else {
+        toast.error("All information fields are required!", {
+            position: "top-center",
+            autoClose: 3000, // Closes after 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+        });
+        
+      }
   };
   
   const handleGameWithQuestionsSubmit = async (e: React.FormEvent) => {
@@ -158,9 +188,9 @@ export const CreateGameForm = () => {
       };
   
       const response = await axios.post(`https://testcarthaplay.onrender.com/api/games-with-questions`, gameData);
-  
+      setLoading(true)
       if (response.status === 201) {
-        alert('Game and questions submitted successfully!');
+        setLoading(false)
         navigate(`/teacher/dashboard/${userId}`)
         console.log(response)
       } else {
@@ -180,8 +210,13 @@ export const CreateGameForm = () => {
   console.log(questions)
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 transform hover:scale-[1.01] transition-all duration-300">
+    <>
+    {loading? <Loading/> :
+    
+    <>
+        <ToastContainer/>
+        <div className="max-w-3xl mx-auto">
+      <div className="bg-white/80  rounded-2xl shadow-xl p-8 transform hover:scale-[1.01] transition-all duration-300">
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between mb-2">
@@ -341,18 +376,19 @@ export const CreateGameForm = () => {
                     onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
                     className="form-input"
                     placeholder="Entrez votre question"
+                    required
                   />
                 </div>
                 <div className="relative group">
                   <Target className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
-                  <label className="form-label">Niveau d'apparition</label>
+                  <label className="form-label">Niveau de difficulté</label>
                   <select
                     value={currentQuestion.level ? currentQuestion.level : "select"}
                     onChange={(e) => setCurrentQuestion({...currentQuestion , level : Number(e.target.value)})}
                     className="form-select pl-12"
                     required
                   >
-                    <option value="">Sélectionner un niveau</option>
+                    <option value="">Sélectionner le niveau d'apparition</option>
 
                     <option value="1">Niveau 1</option>
                     <option value="2">Niveau 2</option>
@@ -374,6 +410,7 @@ export const CreateGameForm = () => {
                         }}
                         className="form-input"
                         placeholder={`Option ${index + 1}`}
+                        required
                       />
                     </div>
                   ))}
@@ -383,6 +420,7 @@ export const CreateGameForm = () => {
                   <label className="form-label">Réponse correcte</label>
                   <select
                     value={currentQuestion.correctAnswer}
+                    required
                     onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
                     className="form-select"
                   >
@@ -416,19 +454,20 @@ export const CreateGameForm = () => {
                     onChange={(e) => setCurrentInformation({ ...currentInformation, info: e.target.value })}
                     className="form-input"
                     placeholder="Entrez votre question"
+                    required
                   />
                 </div>
 
                 <div className="relative group">
                   <Target className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
-                  <label className="form-label">Niveau d'apparition</label>
+                  <label className="form-label">Niveau de difficulté</label>
                   <select
                     value={currentInformation.level ? currentInformation.level : "select"}
                     onChange={(e) => setCurrentInformation({...currentInformation , level : Number(e.target.value)})}
                     className="form-select pl-12"
                     required
                   >
-                    <option value="">Sélectionner un niveau</option>
+                    <option value="">Sélectionner le niveau d'apparition</option>
 
                     <option value="1">Niveau 1</option>
                     <option value="2">Niveau 2</option>
@@ -469,6 +508,12 @@ export const CreateGameForm = () => {
           </div>
         )}
       </div>
-    </div>
+        </div>
+    
+    </>}
+    </>
+    
+    
   );
 };
+
