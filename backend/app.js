@@ -21,6 +21,7 @@ const cors = require('cors');
 connectDB();
 app.use(express.json());
 app.use(cors());
+app.options("*", cors());
 
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request at ${req.originalUrl}`);
@@ -60,6 +61,9 @@ const generateClassroomCode = async () => {
 
   return code;
 };
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
 
 
 app.post('/api/signup', async (req, res) => {
