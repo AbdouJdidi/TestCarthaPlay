@@ -34,7 +34,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
         const userId = decoded.id;
         setUserId(userId);
   
-        const response = await axios.get(`http://localhost:5000/api/games/${userId}`);
+        const response = await axios.get(`https://testcarthaplay.onrender.com/api/games/${userId}`);
         console.log(response);
         setGames(response.data.data);
       } catch (err) {
@@ -48,7 +48,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
 
   const handleDelete = async (gameId : number) =>{
 
-    const res =await axios.delete(`http://localhost:5000/api/games/${gameId}`)
+    const res =await axios.delete(`https://testcarthaplay.onrender.com/api/games/${gameId}`)
     console.log(res)
     setGames((prevGames) => prevGames.filter((game) => +game.id !== gameId));
 
