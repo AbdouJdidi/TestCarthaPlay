@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Background } from '../components/Background';
 import { RoleCard } from '../components/RoleCard';
+import logo from '../../assets/logo.png'
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -48,12 +49,14 @@ export const Home = () => {
       <header className="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <div className="relative animate-float">
-                <BookOpen className="h-8 w-8 text-indigo-600" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
+                {/* <BookOpen className="h-8 w-8 text-indigo-600" /> */}
+                {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div> */}
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <img src = {logo} className='w-12 h-12' />
+
+              <span className="text-3xl font-bold bg-primary  bg-clip-text text-transparent">
                 CarthaPlay
               </span>
             </div>
@@ -75,7 +78,7 @@ export const Home = () => {
         <div className="text-center mb-16 animate-fade-in">
           <h1 className="text-6xl font-bold text-gray-900 mb-6">
             Bienvenue sur{' '}
-            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent animate-pulse">
               CarthaPlay
             </span>
           </h1>

@@ -297,7 +297,7 @@ return (
     <div className="max-w-3xl mx-auto">
       <div className="bg-white/80 rounded-2xl shadow-xl p-8">
         <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
-          <span className="gradient-text">Game Details</span>
+          <span className="text-primary">Détails du jeu </span>
         </h2>
   
         <div className='flex flex-col justify-center '>
@@ -335,7 +335,7 @@ return (
                         />
                         <button
                           onClick={() => handleUpdate(item.id, currentLevel , { question: updatedText })}
-                          className="text-sm text-white bg-indigo-600 px-3 py-1 rounded mr-2"
+                          className="text-sm text-white bg-primary px-3 py-1 rounded mr-2"
                         >
                           Save
                         </button>
@@ -366,7 +366,7 @@ return (
                                     setEditingId(item.id);
                                     setUpdatedText(item.question);
                                   }}
-                                  className="p-1 text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"
+                                  className="p-1 text-transparent bg-secondary rounded-full"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -401,7 +401,7 @@ return (
                               onClick={() =>
                                 handleUpdateOption(currentLevel,item.id, option.id, updatedOptionText)
                               }
-                              className="text-sm text-white bg-indigo-600 px-3 py-1 rounded mr-2"
+                              className="text-sm text-white bg-dark px-3 py-1 rounded mr-2"
                             >
                               Save
                             </button>
@@ -455,7 +455,7 @@ return (
                                     setEditingOption({ questionId: item.id, optionId: option.id });
                                     setUpdatedOptionText(option.text);
                                   }}
-                                  className="p-1 text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"
+                                  className="p-1 text-transparent bg-gradient-to-r from-secondary to-primary rounded-full"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -497,7 +497,7 @@ return (
                         />
                         <button
                           onClick={() => handleUpdateInfo(+item.id, item.level ,  { info: updatedText })}
-                          className="text-sm text-white bg-indigo-600 px-3 py-1 rounded mr-2"
+                          className="text-sm text-white bg-dark px-3 py-1 rounded mr-2"
                         >
                           Save
                         </button>
@@ -526,7 +526,7 @@ return (
                               <button onClick={() => {
                                     setEditingId(+item.id);
                                     setUpdatedText(item.info);
-                                  }} className="p-1 text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full">
+                                  }} className="p-1 text-transparent bg-gradient-to-r from-secondary to-primary rounded-full">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   className="h-5 w-5 text-white"
@@ -574,7 +574,7 @@ return (
                       );
                     }}
                     
-                    className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                    className="flex-1 py-3 px-6 rounded-xl bg-primary text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                     
                     
                   >

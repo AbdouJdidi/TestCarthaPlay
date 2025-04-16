@@ -220,19 +220,19 @@ export const CreateGameForm = () => {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">Progression</span>
-            <span className="text-sm font-medium text-indigo-600">{step}/2</span>
+            <span className="text-sm font-medium text-black">Progression</span>
+            <span className="text-sm font-medium text-black">{step}/2</span>
           </div>
           <div className="h-2 bg-gray-200 rounded-full">
             <div 
-              className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-secondary to-primary rounded-full transition-all duration-500"
               style={{ width: `${(step/2) * 100}%` }}
             ></div>
           </div>
         </div>
 
         <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
-          <span className="gradient-text">
+          <span className="text-primary">
             {step === 1 ? 'Créer un nouveau jeu éducatif' : 'Ajouter des questions'}
           </span>
         </h2>
@@ -304,7 +304,7 @@ export const CreateGameForm = () => {
 
             <button
               type="submit"
-              className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+              className="w-full py-3 px-6 rounded-xl bg-primary text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
             >
               <span>Suivant</span>
               <ChevronRight className="ml-2 h-5 w-5" />
@@ -434,7 +434,7 @@ export const CreateGameForm = () => {
                 <button
                   type="button"
                   onClick={addQuestion}
-                  className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-indigo-200 text-secondary font-medium hover:bg-indigo-50 transition-colors duration-200 flex items-center justify-center space-x-2"
                 >
                   <Plus className="h-5 w-5" />
                   <span>Ajouter la question</span>
@@ -478,7 +478,7 @@ export const CreateGameForm = () => {
                 <button
                   type="button"
                   onClick={addInformation}
-                  className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  className="w-full py-2 px-4 rounded-lg border-2 border-dashed border-indigo-200 text-secondary font-medium hover:bg-indigo-50 transition-colors duration-200 flex items-center justify-center space-x-2"
                 >
                   <Plus className="h-5 w-5" />
                   <span>Ajouter l'information</span>
@@ -497,7 +497,7 @@ export const CreateGameForm = () => {
               <button
                 type="button"
                 onClick={(e)=>{handleClick() ; handleGameWithQuestionsSubmit(e)}}
-                className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-secondary to-primary text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                 disabled={questions.length === 0 || isDisabled}
                  
               >

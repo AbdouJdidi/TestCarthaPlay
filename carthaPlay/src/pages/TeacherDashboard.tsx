@@ -18,27 +18,27 @@ export const TeacherDashboard = () => {
       description: 'Concevez un nouveau jeu éducatif interactif',
       icon: Gamepad2,
       path: '/teacher/create-game',
-      gradient: 'from-indigo-600 to-purple-600',
+      gradient: 'from-primary to-secondary',
       iconBg: 'bg-indigo-100',
-      iconColor: 'text-indigo-600'
+      iconColor: 'text-primary'
     },
     {
       title: 'Jeux existants',
       description: 'Accédez à la bibliothèque des jeux',
       icon: Library,
       path: '/teacher/games',
-      gradient: 'from-purple-600 to-pink-600',
-      iconBg: 'bg-purple-100',
-      iconColor: 'text-purple-600'
+      gradient: 'from-primary to-secondary',
+      iconBg: 'bg-indigo-100',
+      iconColor: 'text-primary'
     },
     {
       title: 'Suivi des classes',
       description: 'Visualisez les performances des élèves',
       icon: BarChart3,
       path: '/teacher/tracking',
-      gradient: 'from-pink-600 to-rose-600',
-      iconBg: 'bg-pink-100',
-      iconColor: 'text-pink-600'
+      gradient: 'from-primary to-secondary',
+      iconBg: 'bg-indigo-100',
+      iconColor: 'text-primary'
     },
   ];
 
@@ -46,7 +46,7 @@ export const TeacherDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-12">
-          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
             Tableau de bord enseignant
           </span>
         </h1>
@@ -71,7 +71,7 @@ export const TeacherDashboard = () => {
                 {option.description}
               </p>
 
-              <div className={`flex items-center text-sm font-medium bg-gradient-to-r ${option.gradient} bg-clip-text text-transparent`}>
+              <div className={`flex font-bold items-center text-sm  bg-gradient-to-r ${option.gradient} bg-clip-text text-transparent`}>
                 Commencer
                 <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </div>

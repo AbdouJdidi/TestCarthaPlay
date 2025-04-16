@@ -15,6 +15,8 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 
 const app = express();
+const hmacInterceptor = require('./middlewares/hmacInterceptor')
+
 const cors = require('cors');
 
 
@@ -61,6 +63,7 @@ const generateClassroomCode = async () => {
 
   return code;
 };
+
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
@@ -285,7 +288,7 @@ app.get('/api/questions', async (req, res) => {
     }
   });
   
-  app.get('/api/games/:userId', async (req, res) => {
+  app.get('/api/games/:userId',hmacInterceptor, async (req, res) => {
     try {
       const { userId } = req.params;
   
@@ -532,7 +535,6 @@ app.get('/api/questions', async (req, res) => {
     const { gameId } = req.params;
   
     try {
-      // Step 1: Retrieve all question IDs associated with the game
       const { data: questions, error: questionsError } = await supabase
         .from('questions')
         .select('id')
@@ -733,7 +735,6 @@ app.get('/api/questions', async (req, res) => {
     const { gameId } = req.params;
   
     try {
-      // Step 1: Fetch game details
       const { data: game, error: gameError } = await supabase
         .from('games')
         .select('*')
@@ -744,7 +745,6 @@ app.get('/api/questions', async (req, res) => {
         return res.status(404).json({ error: 'Game not found' });
       }
   
-      // Step 2: Fetch questions related to the game
       const { data: questions, error: questionError } = await supabase
         .from('questions')
         .select('*')
@@ -770,24 +770,20 @@ app.get('/api/questions', async (req, res) => {
         }
       }
   
-      // Step 4: Fetch informations related to the game
       const { data: informations, error: infoError } = await supabase
         .from('informations')
         .select('*')
         .eq('game_id', gameId)
-        .order('order', { ascending: true }); // Order informations properly
+        .order('order', { ascending: true }); 
   
       if (infoError) {
         return res.status(400).json({ error: infoError.message });
       }
   
-      // Step 5: Merge questions and informations into a single ordered array
       const combinedData = [...questions, ...informations].sort((a, b) => a.order - b.order);
-  
-      // Step 6: Return structured data
-      res.status(200).json({
+        res.status(200).json({
         game,
-        content: combinedData, // Ordered list of questions & informations
+        content: combinedData, 
       });
     } catch (error) {
       console.error('Server error:', error);
@@ -879,7 +875,6 @@ app.post('/api/add-student', async (req, res) => {
   }
 
   try {
-    // Get the student ID from the students table
     const { data: student, error: studentError } = await supabase
       .from('students')
       .select('id')
@@ -890,7 +885,6 @@ app.post('/api/add-student', async (req, res) => {
       return res.status(404).json({ error: 'Student not found' });
     }
 
-    // Get the classroom ID from the classroom table
     const { data: classroom, error: classroomError } = await supabase
       .from('classroom')
       .select('id')

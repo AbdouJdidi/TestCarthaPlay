@@ -5,7 +5,7 @@ import { BookOpen, GraduationCap, Target, Plus, Search } from 'lucide-react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { IoKeyOutline } from "react-icons/io5";
-
+import { generateHmacSignature } from '../utils/hmac';
 
 interface GameListProps {
   role: 'teacher' | 'student';
@@ -28,13 +28,22 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
     const fetchGames = async () => {
       const token = localStorage.getItem('token');
       if (!token) return;
+
+      const payload = {}
+      const signature  = generateHmacSignature(payload)
   
       try {
         const decoded: TokenPayload = jwtDecode(token);
         const userId = decoded.id;
         setUserId(userId);
   
-        const response = await axios.get(`https://testcarthaplay.onrender.com/api/games/${userId}`);
+        const response = await axios.get(`https://testcarthaplay.onrender.com/api/games/${userId}`,{
+          headers : {
+            'x-signature' : signature,
+          }
+        }
+          
+        );
         console.log(response);
         setGames(response.data.data);
       } catch (err) {
@@ -65,14 +74,14 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
               {role === 'teacher' ? 'Bibliothèque des jeux' : 'Jeux disponibles'}
             </span>
           </h1>
           {role === 'teacher' && (
             <button
               onClick={() => navigate('/teacher/create-game')}
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
+              className="flex items-center space-x-2 px-4 py-2 bg-secondary text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
             >
               <Plus className="h-5 w-5" />
               <span>Créer un jeu</span>
@@ -112,8 +121,8 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
               </div>
 
               <div className="flex items-center space-x-4 mb-4">
-                <div className="p-3 bg-indigo-100 rounded-lg">
-                  <BookOpen className="h-6 w-6 text-indigo-600" />
+                <div className="p-3 bg-primary rounded-lg">
+                  <BookOpen className="h-6 w-6 text-secondary" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">{game.lesson}</h3>
@@ -147,7 +156,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
                         : `/student/games/${game.id}`
                       );
                     }}
-                    className="mt-4 w-full py-2 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
+                    className="mt-4 w-full py-2 px-4 bg-gradient-to-r from-secondary to-primary text-white rounded-lg font-medium hover:from-primary hover:to-secondary transition-colors duration-200"
                   >
                     {role === 'teacher' ? 'Modifier le jeu' : 'Commencer à jouer'}
                   </button>
@@ -155,9 +164,9 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
                   <button 
                       onClick={() => handleDelete(+game.id)}
 
-                      className="mt-4 w-full py-2 px-4 bg-white border  from-indigo-600 to-purple-600 text-gradient-to-r rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
+                      className="mt-4 w-full py-2 px-4 bg-white border border-primary rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200"
                   > 
-                        delete game
+                        Delete game
                   </button>
 
                 </div>
