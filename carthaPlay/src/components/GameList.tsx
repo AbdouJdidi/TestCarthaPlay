@@ -37,7 +37,7 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
         const userId = decoded.id;
         setUserId(userId);
   
-        const response = await axios.get(`https://testcarthaplay.onrender.com/api/games/${userId}`,{
+        const response = await axios.get(`http://localhost:5000/api/games/${userId}`,{
           headers : {
             'x-signature' : signature,
           }

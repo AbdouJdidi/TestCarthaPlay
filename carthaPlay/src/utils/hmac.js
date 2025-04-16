@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js'
 
-const SECRET_KEY = 'abdels11';
+const SECRET_KEY = 'abdels';
 
 export const generateHmacSignature = (payload) => {
     const message = JSON.stringify(payload);
