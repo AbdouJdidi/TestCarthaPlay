@@ -29,8 +29,10 @@ export const GameList: React.FC<GameListProps> = ({ role }) => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const payload = {}
-      const signature  = generateHmacSignature(payload)
+      const payload = {userId :  String(userId)}
+      console.log(userId)
+      const signature  = generateHmacSignature(payload);
+      console.log('signature', signature)
   
       try {
         const decoded: TokenPayload = jwtDecode(token);

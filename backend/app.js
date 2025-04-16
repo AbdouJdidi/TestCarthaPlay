@@ -11,19 +11,18 @@ const jwt = require('jsonwebtoken');
 const supabaseUrl = 'https://atxlibiabsrnubvasudo.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0eGxpYmlhYnNybnVidmFzdWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM1NDk3NzMsImV4cCI6MjA0OTEyNTc3M30.tCc2160i2wwtiGbSjuMSoJ_EAkCy2Uo8pLE89m8_ZJM';
 const supabase = createClient(supabaseUrl, supabaseKey);
+const hmacInterceptor = require('./middlewares/hmacInterceptor');
+
 
 
 
 const app = express();
-const hmacInterceptor = require('./middlewares/hmacInterceptor')
-
 const cors = require('cors');
-
-
 connectDB();
 app.use(express.json());
 app.use(cors());
 app.options("*", cors());
+
 
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request at ${req.originalUrl}`);
@@ -288,7 +287,7 @@ app.get('/api/questions', async (req, res) => {
     }
   });
   
-  app.get('/api/games/:userId',hmacInterceptor, async (req, res) => {
+  app.get('/api/games/:userId', hmacInterceptor , async (req, res) => {
     try {
       const { userId } = req.params;
   
