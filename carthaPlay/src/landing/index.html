@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarthaPlay</title>
+    <meta name="description" content="منصة تعليمية متكاملة">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bakbak+One&family=Baloo+Bhaijaan+2:wght@400;500;600;700&family=Baloo+Bhaijaan:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="min-h-screen">
+    <nav id="header" class="w-full z-[9999] top-0 left-0 right-0 fixed py-4 px-4 md:px-6 transition-all duration-300">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center order-2">
+                <a href="#" class="text-2xl text-white font-bakbak">CarthaPlay</a>
+                <img src="logo.png" alt="" class="h-12 w-12 mr-2">
+            </div>
+            <div class="hidden md:flex items-center gap-10 order-1">
+                <a href="index.html" class="text-white hover:text-blue-100 font-baloo2 order-5">الرئيسية</a>
+                <a href="#features" class="text-white hover:text-blue-100 font-baloo2 order-4">المميزات</a>
+                <a href="#resources" class="text-white hover:text-blue-100 font-baloo2 order-3">الموارد</a>
+                <a href="#contact" class="text-white hover:text-blue-100 font-baloo2 order-2">تواصل معنا</a>
+                <button class="login-btn order-1">
+                    <span class="font-baloo2">تسجيل الدخول</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white p-2">
+                    <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden mt-4 bg-white/10 backdrop-blur-md rounded-lg p-4 hidden">
+            <div class="flex flex-col space-y-3">
+                <a href="index.html" class="text-white hover:text-blue-100 py-2 font-baloo2">الرئيسية</a>
+                <a href="#features" class="text-white hover:text-blue-100 py-2 font-baloo2">المميزات</a>
+                <a href="#resources" class="text-white hover:text-blue-100 py-2 font-baloo2">الموارد</a>
+                <a href="#contact" class="text-white hover:text-blue-100 py-2 font-baloo2">تواصل معنا</a>
+                <button class="login-btn w-full justify-center">
+                    <span class="font-baloo2">تسجيل الدخول</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <section class="education-video-section py-16 overflow-hidden pt-32" id="home">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 relative education-illustration" data-aos="fade-left" data-aos-duration="1000">
+                    <img src="pic1.png" alt="">
+                </div>
+                <div class="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2"
+                    style="direction: rtl;" data-aos="fade-right" data-aos-duration="1000">
+                    <h2 class="text-4xl md:text-5xl mb-4 font-baloo">نبدلو التعليم</h2>
+                    <h3 class="text-3xl md:text-4xl mb-6 font-baloo">...لعبة بلعبة</h3>
+
+                    <p class="text-lg mb-4"><span class="font-baloo">CarthaPlay,</span>
+                        المنصة إلّي تخلي القراية تجربة ممتعة وفعّالة.
+                    </p>
+
+                    <p class="text-lg mb-4">
+                        مع <span class="font-baloo">CarthaPlay</span>، نعاونوا المربّين و الأولياء باش يقدّموا محتوى
+                        تعليمي في شكل ألعاب ترفيهية وممتعة. المنصة مصمّمة باش تخلّي الصغار يقروا، يلعبوا ويتطوّروا في
+                        نفس الوقت.
+                    </p>
+
+                    <p class="text-lg mb-6">
+                        كل لعبة تتبع هدف تربوي، وكل طفل عندو متابعة وتقييم خاص بيه.
+                    </p>
+
+                    <a href="#"
+                        class="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
+                        data-aos="zoom-in" data-aos-delay="300">
+                        اكتشف المنصة
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cartha-play-section py-16" id="features">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 relative education-illustration" data-aos="fade-right" data-aos-duration="1000">
+                    <img src="pic2.png" alt="CarthaPlay Illustration">
+                </div>
+                <div class="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2"
+                    style="direction: rtl;" data-aos="fade-left" data-aos-duration="1000">
+                    <h2 class="text-4xl md:text-5xl mb-6 font-baloo">شنوة CarthaPlay؟</h2>
+
+                    <p class="text-lg mb-4"><span class="font-baloo">CarthaPlay,</span>
+                        هي فكرة جمعتنا، إحنا ثلاث طلبة مهندسين: رودينة كوكة، عبد الرحمان الجديدي، ونادر بن صالح.
+                    </p>
+
+                    <p class="text-lg mb-4">
+                        حبّينا نبدلو طريقة التعليم ونخليوها أكثر تفاعلية وقريبة للصغار والأولياء. آمنا إلّي التعليم ينجم
+                        يكون لعبة، وقررنا نطوّرو <span class="font-baloo">CarthaPlay</span> باش نوصّلو الرسالة هاذي.
+                    </p>
+
+                    <p class="text-lg mb-6">
+                        المنصّة متاعنا ديما في القمّة، وربحنا برشا Hackathon ومسابقات في مجال EdTech، وكلّ مرّة نزيدو
+                        نطوّرو باش نقدمو حاجة أفضل للأطفال والمربين.
+                    </p>
+
+                    <a href="#"
+                        class="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
+                        data-aos="zoom-in" data-aos-delay="300">
+                        إكتشف المنصة
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cartha-play-guide-section py-16" id="resources">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 flex justify-center" data-aos="fade-left" data-aos-duration="1000">
+                    <img src="pic3.png" alt="CarthaPlay Usage Guide">
+                </div>
+                <div class="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2"
+                    style="direction: rtl;" data-aos="fade-right" data-aos-duration="1000">
+                    <h2 class="text-4xl md:text-5xl mb-6 font-baloo">تحبّ تفهم كيفاش تستعمل CarthaPlay؟</h2>
+
+                    <p class="text-lg mb-6">
+                        في دليل الاستعمال باش تلقى كلّ شي: كيفاش تخلق حساب، كيفاش تبرمج الألعاب و كيفاش تتابع تقدّم
+                        التلامذة.
+                        كل خطوة مفسّرة بطريقة بسيطة وبصور باش تسهّل عليك الاستعمال من أوّل مرّة.
+                    </p>
+
+                    <a href="#"
+                        class="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
+                        data-aos="zoom-in" data-aos-delay="300">
+                        إكتشف المنصة
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="account-creation-section py-16">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 flex justify-center" data-aos="fade-right" data-aos-duration="1000">
+                    <img src="pic4.png" alt="CarthaPlay Account Creation">
+                </div>
+                <div class="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2"
+                    style="direction: rtl;" data-aos="fade-left" data-aos-duration="1000">
+                    <h2 class="text-4xl md:text-5xl mb-6 font-baloo">المرحلة الأولى : إنشاء حساب</h2>
+
+                    <p class="text-lg mb-6">
+                        في دليل الاستعمال باش تلقى كلّ شي: كيفاش تخلق حساب، كيفاش تبرمج الألعاب و كيفاش تتابع تقدّم
+                        التلامذة.
+                        كل خطوة مفسّرة بطريقة بسيطة وبصور باش تسهّل عليك الاستعمال من أوّل مرّة.
+                    </p>
+
+                    <a href="#"
+                        class="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
+                        data-aos="zoom-in" data-aos-delay="300">
+                        إكتشف المنصة
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section py-16" id="contact">
+        <div class="container mx-auto px-4 md:px-6">
+            <h2 class="text-4xl md:text-5xl text-white text-center mb-12 font-baloo" data-aos="fade-down">تواصل معنا:
+            </h2>
+            <div class="flex justify-center mb-12 relative" data-aos="zoom-in" data-aos-duration="1200">
+                <div class="absolute left-4 bottom-2 md:left-[15%] md:-bottom-4" data-aos="fade-right"
+                    data-aos-delay="300">
+                    <img src="arrow1.png" alt="Left Arrow" class="w-20 h-20 md:w-40 md:h-40">
+                </div>
+                <div class="w-64 h-64 md:w-80 md:h-80 relative z-10">
+                    <img src="pic5.png" alt="Contact Illustration" class="w-full h-full object-contain">
+                </div>
+                <div class="absolute right-4 bottom-2 md:right-[15%] md:-bottom-4" data-aos="fade-left"
+                    data-aos-delay="300">
+                    <img src="arrow2.png" alt="Right Arrow" class="w-20 h-20 md:w-40 md:h-40">
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row gap-4 p-6">
+                <div class="bg-[#004AAD] rounded-3xl p-6 flex-1 relative overflow-hidden contact-card"
+                    data-aos="fade-up" data-aos-delay="100" data-aos-duration="800">
+                    <div class="flex justify-center mb-8 mt-4">
+                        <div class="w-32 h-32 rounded-full border-4 border-transparent relative">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="#f00" stroke-width="2"
+                                    stroke-dasharray="60 290" stroke-dashoffset="0" />
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="2"
+                                    stroke-dasharray="220 290" stroke-dashoffset="-60" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="text-center text-white">
+                        <h2 class="text-2xl font-bold font-baloo2">Roudayna Kouka</h2>
+                        <p class="text-lg mb-4 text-[#5DE0E6] font-baloo2"><strong>CMO</strong></p>
+                        <div class="flex items-center justify-center mb-2">
+                            <a href="mailto:roudayna.kouka@etudiant-fst.utm.tn"
+                                class="text-sm hover:underline font-baloo2">
+                                <strong>roudayna.kouka<br />etudiant-fst.utm.tn@</strong>
+                            </a>
+                            <div class="bg-white p-1 rounded-md mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-700" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <a href="tel:+21693629921" class="text-sm hover:underline font-baloo2">
+                                <strong>921 629 93 +216</strong>
+                            </a>
+                            <div class="bg-white p-1 rounded-md mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-700" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-4 bg-white rounded-t-full transform translate-y-1">
+                    </div>
+                </div>
+                <div class="bg-[#004AAD] rounded-3xl p-6 flex-1 relative overflow-hidden contact-card"
+                    data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">
+                    <div class="flex justify-center mb-8 mt-4">
+                        <div class="w-32 h-32 rounded-full border-4 border-transparent relative">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="#f00" stroke-width="2"
+                                    stroke-dasharray="60 290" stroke-dashoffset="0" />
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="2"
+                                    stroke-dasharray="220 290" stroke-dashoffset="-60" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="text-center text-white">
+                        <h2 class="text-2xl font-bold font-baloo2">Nader Ben Salah</h2>
+                        <p class="text-lg mb-4 text-[#5DE0E6] font-baloo2"><strong>CEO</strong></p>
+                        <div class="flex items-center justify-center mb-2">
+                            <a href="mailto:nader.bensalah@etudiant-fst.utm.tn"
+                                class="text-sm hover:underline font-baloo2">
+                                <strong> nader.bensalah<br />etudiant-fst.utm.tn@</strong>
+                            </a>
+                            <div class="bg-white p-1 rounded-md mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-700" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center">
+
+                            <a href="tel:+21623032610" class="text-sm hover:underline font-baloo2">
+                                <strong> 610 032 23 +216</strong>
+                            </a>
+                            <div class="bg-white p-1 rounded-md mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-700" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-4 bg-white rounded-t-full transform translate-y-1">
+                    </div>
+                </div>
+                <div class="bg-[#004AAD] rounded-3xl p-6 flex-1 relative overflow-hidden contact-card"
+                    data-aos="fade-up" data-aos-delay="300" data-aos-duration="800">
+                    <div class="flex justify-center mb-8 mt-4">
+                        <div class="w-32 h-32 rounded-full border-4 border-transparent relative">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="#f00" stroke-width="2"
+                                    stroke-dasharray="60 290" stroke-dashoffset="0" />
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="2"
+                                    stroke-dasharray="220 290" stroke-dashoffset="-60" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="text-center text-white">
+                        <h2 class="text-2xl font-bold font-baloo2">Abderrahmen Jedidi</h2>
+                        <p class="text-lg mb-4 text-[#5DE0E6] font-baloo2"><strong>CTO</strong></p>
+                        <div class="flex items-center justify-center mb-2">
+                            <a href="mailto:abderrahmen.jedidi@etudiant-fst.utm.tn"
+                                class="text-sm hover:underline font-baloo2">
+                                <strong> abderrahmen.jedidi<br />etudiant-fst.utm.tn@</strong>
+                            </a>
+                            <div class="bg-white p-1 rounded-md mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-700" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <a href="tel:+21653158628" class="text-sm hover:underline font-baloo2">
+                                <strong>
+                                    628 158 53 +216
+                                </strong>
+                            </a>
+                            <div class="bg-white p-1 rounded-md mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-700" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-4 bg-white rounded-t-full transform translate-y-1">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+
+</html>

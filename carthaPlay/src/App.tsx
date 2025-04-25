@@ -13,6 +13,7 @@ import { CreateGameForm } from './components/CreateGameForm';
 import { GameList } from './components/GameList';
 import SignupForm from './components/SignupForm';
 import GamesDetails from './pages/GameDetails';
+import LandingPage from './landing/LandingPage';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
         <Route path="/teacher/tracking" element={<TeacherTracking />} />
         <Route path="/student/dashboard/:id" element={<StudentDashboard />} />
         <Route path="/student/games" element={<GameList role="student" />} />
+        <Route path="/landing" element={<LandingPage/>} />
+
         {/* <Route path="/game" element={<GameApp />} /> */}
       </Routes>
     </Router>
