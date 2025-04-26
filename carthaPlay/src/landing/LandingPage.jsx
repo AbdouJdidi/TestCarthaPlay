@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
-import "./styles.css"; // Make sure this is in your `src` folder or correctly referenced
+import "./styles.css"; 
 import logo from "./logo.png";
 import pic1 from "./pic1.png";
 import pic2 from "./pic2.png";
@@ -22,12 +22,7 @@ const LandingPage = () => {
   const closeIconRef = useRef(null);
   const headerRef = useRef(null);
   useEffect(() => {
-    // AOS initialization
-    if (typeof AOS === "undefined") {
-      AOS = {
-        init: () => {},
-      };
-    }
+    
 
     AOS.init({
       duration: 800,
