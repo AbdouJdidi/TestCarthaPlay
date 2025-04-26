@@ -24,21 +24,21 @@ export const Home = () => {
       title: 'Apprentissage Ludique',
       description: 'Des jeux éducatifs conçus pour rendre l\'apprentissage amusant et efficace',
       color: 'bg-blue-100',
-      iconColor: 'text-blue-600',
+      iconColor: 'text-primary',
     },
     {
       icon: Target,
       title: 'Suivi Personnalisé',
       description: 'Tableau de bord détaillé pour suivre la progression de chaque élève',
       color: 'bg-purple-100',
-      iconColor: 'text-purple-600',
+      iconColor: 'text-primary',
     },
     {
       icon: BookOpenCheck,
       title: 'Multi-matières',
       description: 'Des jeux adaptés à toutes les matières et niveaux scolaires',
-      color: 'bg-pink-100',
-      iconColor: 'text-pink-600',
+      color: 'bg-blue-100',
+      iconColor: 'text-primary',
     },
   ];
 
@@ -108,7 +108,7 @@ export const Home = () => {
             description="Créez des jeux éducatifs et suivez les progrès de vos élèves"
             gradient="bg-gradient-to-r from-indigo-600 to-purple-600"
             iconBg="bg-indigo-100"
-            iconColor="text-indigo-600"
+            iconColor="text-primary"
             onClick={() => navigate('/signup/teacher')}
           />
 
@@ -117,8 +117,8 @@ export const Home = () => {
             title="Élève"
             description="Accédez aux jeux et suivez votre progression d'apprentissage"
             gradient="bg-gradient-to-r from-purple-600 to-pink-600"
-            iconBg="bg-purple-100"
-            iconColor="text-purple-600"
+            iconBg="bg-indigo-100"
+            iconColor="text-primary"
             onClick={() => navigate('/login/student')}
           />
         </div>

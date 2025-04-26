@@ -124,7 +124,7 @@ const SignupForm = ({ role }) => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className={`w-full py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full py-2 bg-secondary text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={loading}
             >
               {loading ? 'Signing up...' : 'Sign Up'}

@@ -8,7 +8,11 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
+
+  
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,18 +22,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+    setLoading(true); // Start loading
+  
     try {
-      // Make API call to the backend login route
       const response = await axios.post('https://testcarthaplay.onrender.com/api/login', formData);
-      console.log(response)
-
+      console.log(response);
+  
       if (response.data.message === 'Login successful') {
-        // Save token in localStorage
         localStorage.setItem('token', response.data.token);
         const userId = response.data.user.id;
-
-        // Redirect based on the user's role
+  
         if (response.data.user.role === 'teacher') {
           navigate(`/teacher/dashboard/${userId}`);
         } else {
@@ -44,8 +46,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
       } else {
         setError('An error occurred. Please try again.');
       }
+    } finally {
+      setLoading(false); // Stop loading whether success or error
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -58,9 +63,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
         <div className="relative bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-all duration-300">
           <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
             <div className="relative">
-              <div className="w-24 h-24 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-300">
+              <div className="w-24 h-24 bg-gradient-to-br from-white to-primary rounded-2xl shadow-lg flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-300">
                 {role === 'teacher' ? (
-                  <GraduationCap className="w-12 h-12 text-white" />
+                  <GraduationCap className="w-12 h-12 text-primary" />
                 ) : (
                   <BookOpen className="w-12 h-12 text-white" />
                 )}
@@ -101,10 +106,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
 
               <button
                 type="submit"
-                className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200"
+                disabled={loading}
+                className="w-full py-3 px-6 rounded-xl bg-secondary to-purple-600 text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
               >
-                Se connecter
+                {loading ? (
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                  </svg>
+                ) : (
+                  "Se connecter"
+                )}
               </button>
+
             </form>
 
             {error && (

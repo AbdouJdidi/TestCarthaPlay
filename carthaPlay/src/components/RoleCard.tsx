@@ -33,7 +33,7 @@ export const RoleCard: React.FC<RoleCardProps> = ({
         <div className="flex-1">
           <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
           <p className="text-gray-600 mb-4">{description}</p>
-          <div className={`flex items-center ${iconColor} font-medium`}>
+          <div className={`flex items-center text-primary font-medium`}>
             <span>Commencer</span>
             <ChevronRight className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
           </div>

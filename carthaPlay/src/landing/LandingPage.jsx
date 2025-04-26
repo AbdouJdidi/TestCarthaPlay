@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
-import "./styles.css"; 
 import logo from "./logo.png";
 import pic1 from "./pic1.png";
 import pic2 from "./pic2.png";
@@ -12,6 +11,7 @@ import pic5 from "./pic5.png";
 
 import arrow1 from "./arrow1.png"
 import arrow2 from "./arrow2.png"
+import { Link } from "react-router-dom";
 
 
 const LandingPage = () => {
@@ -21,6 +21,21 @@ const LandingPage = () => {
   const menuIconRef = useRef(null);
   const closeIconRef = useRef(null);
   const headerRef = useRef(null);
+
+  useEffect(() => {
+    document.documentElement.className = `
+      m-0 p-0 w-full max-w-[100vw] overflow-x-hidden relative
+      overflow-y-scroll rtl scroll-smooth
+    `;
+    document.body.className = `
+      m-0 p-0 w-full max-w-[100vw] overflow-x-hidden relative
+      bg-[radial-gradient(circle,_#00a1ff,_#0046a5)]
+      font-[Baloo_Bhaijaan_2]
+      
+      min-h-screen
+    `;
+  }, []);
+  
   useEffect(() => {
     
 
@@ -35,7 +50,6 @@ const LandingPage = () => {
       disableMutationObserver: false,
     });
 
-    // Handle mobile menu toggle
     if (mobileMenuButtonRef.current) {
       mobileMenuButtonRef.current.addEventListener("click", () => {
         mobileMenuRef.current.classList.toggle("hidden");
@@ -44,7 +58,6 @@ const LandingPage = () => {
       });
     }
 
-    // Handle scroll event for adding/removing the scrolled class
     const handleScroll = () => {
       if (window.scrollY > 50) {
         headerRef.current.classList.add("scrolled");
@@ -89,7 +102,7 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <header ref={headerRef} className="min-h-screen" id="header" dir="rtl" lang="ar">
+    <header ref={headerRef} className="min-h-screen bg-transparent backdrop-blur-0 transition-all duration-300 ease-in-out" id="header" dir="rtl" lang="ar">
       <nav
         ref={mobileMenuRef}
         id="mobile-menu"
@@ -100,7 +113,7 @@ const LandingPage = () => {
             <a href="#" className="text-2xl text-white font-bakbak">
               CarthaPlay
             </a>
-            <img src={logo} alt="Logo" className="h-12 w-12 mr-2" />
+            <img src={logo} alt="Logo" className="h-12 w-12 mr-2 max-w-full h-auto" />
           </div>
           <div className="hidden md:flex items-center gap-10 order-1">
             <a href="#home" className="text-white hover:text-blue-100 font-baloo2">
@@ -115,7 +128,8 @@ const LandingPage = () => {
             <a href="#contact" className="text-white hover:text-blue-100 font-baloo2">
               تواصل معنا
             </a>
-            <button className="login-btn order-1 flex items-center gap-1 text-white font-baloo2">
+             <Link to="/landing" >
+             <button className="bg-[#0057b7] text-white rounded-full py-2 px-5 flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:bg-[#0046a5] hover:-translate-y-0.5 order-1 flex items-center gap-1 text-white font-baloo2">
               تسجيل الدخول
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -130,6 +144,8 @@ const LandingPage = () => {
                 />
               </svg>
             </button>
+             </Link>
+            
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-white p-2">
                     <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
@@ -157,7 +173,7 @@ const LandingPage = () => {
               data-aos="fade-left"
               data-aos-duration="1000"
             >
-              <img src={pic1} alt="Hero" />
+              <img className="max-w-full h-auto" src={pic1} alt="Hero" />
             </div>
             <div
               className="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2"
@@ -196,7 +212,7 @@ const LandingPage = () => {
               data-aos="fade-right"
               data-aos-duration="1000"
             >
-              <img src={pic2} alt="CarthaPlay Illustration" />
+              <img className="max-w-full h-auto" src={pic2} alt="CarthaPlay Illustration" />
             </div>
             <div
               className="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2"
@@ -233,7 +249,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 flex justify-center" data-aos="fade-left" data-aos-duration="1000">
-              <img src={pic3} alt="CarthaPlay Usage Guide" />
+              <img src={pic3} className="max-w-full h-auto" alt="CarthaPlay Usage Guide" />
             </div>
             <div className="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2" style={{ direction: 'rtl' }} data-aos="fade-right" data-aos-duration="1000">
               <h2 className="text-4xl md:text-5xl mb-6 font-baloo">تحبّ تفهم كيفاش تستعمل CarthaPlay؟</h2>
@@ -253,7 +269,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 flex justify-center" data-aos="fade-right" data-aos-duration="1000">
-              <img src={pic4} alt="CarthaPlay Account Creation" />
+              <img className="max-w-full h-auto" src={pic4} alt="CarthaPlay Account Creation" />
             </div>
             <div className="md:w-1/2 text-white text-center md:text-right mb-10 md:mb-0 font-baloo2" style={{ direction: 'rtl' }} data-aos="fade-left" data-aos-duration="1000">
               <h2 className="text-4xl md:text-5xl mb-6 font-baloo">المرحلة الأولى : إنشاء حساب</h2>
@@ -274,19 +290,19 @@ const LandingPage = () => {
           <h2 className="text-4xl md:text-5xl text-white text-center mb-12 font-baloo" data-aos="fade-down">تواصل معنا:</h2>
           <div className="flex justify-center mb-12 relative" data-aos="zoom-in" data-aos-duration="1200">
             <div className="absolute left-4 bottom-2 md:left-[15%] md:-bottom-4" data-aos="fade-right" data-aos-delay="300">
-              <img src={arrow1} alt="Left Arrow" className="w-20 h-20 md:w-40 md:h-40" />
+              <img src={arrow1} alt="Left Arrow" className="w-20 h-20 md:w-40 md:h-40 max-w-full h-auto" />
             </div>
             <div className="w-64 h-64 md:w-80 md:h-80 relative z-10">
               <img src={pic5} alt="Contact Illustration" className="w-full h-full object-contain" />
             </div>
             <div className="absolute right-4 bottom-2 md:right-[15%] md:-bottom-4" data-aos="fade-left" data-aos-delay="300">
-              <img src={arrow2} alt="Right Arrow" className="w-20 h-20 md:w-40 md:h-40" />
+              <img src={arrow2} alt="Right Arrow" className="w-20 h-20 md:w-40 md:h-40 max-w-full h-auto" />
             </div>
           </div>
             {/* Contact Cards (Similar as above, repeat with different details) */}
 
             <div class="flex flex-col md:flex-row gap-4 p-6">
-                <div class="bg-[#004AAD] rounded-3xl p-6 flex-1 relative overflow-hidden contact-card"
+                <div class="bg-[#004AAD] rounded-3xl p-6 flex-1 relative overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-2.5"
                     data-aos="fade-up" data-aos-delay="100" data-aos-duration="800">
                     <div class="flex justify-center mb-8 mt-4">
                         <div class="w-32 h-32 rounded-full border-4 border-transparent relative">
