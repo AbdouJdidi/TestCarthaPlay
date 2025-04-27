@@ -161,10 +161,9 @@ app.post('/api/login', async (req, res) => {
   }
 
   try {
-    // Step 1: Check if the user exists
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('*')
+      .select('id, username, email, role, password') // Only select necessary fields
       .eq('email', email)
       .single();
 
@@ -172,21 +171,18 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ error: 'User not found' });
     }
 
-    // Step 2: Compare the provided password with the hashed password
     const isPasswordValid = await bcrypt.compare(password, userData.password);
 
     if (!isPasswordValid) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Step 3: Generate a JWT token
     const token = jwt.sign(
       { id: userData.id, email: userData.email, role: userData.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Step 4: Respond with user details and the token
     res.status(200).json({
       message: 'Login successful',
       token,
@@ -202,6 +198,7 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 app.get('/api/questions', async (req, res) => {
