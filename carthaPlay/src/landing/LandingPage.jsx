@@ -191,7 +191,7 @@ const LandingPage = () => {
               </p>
               <p className="text-lg mb-6">كل لعبة تتبع هدف تربوي، وكل طفل عندو متابعة وتقييم خاص بيه.</p>
               <Link
-                to="/landing"
+                to="/signup/teacher"
                 className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
                 data-aos="zoom-in"
                 data-aos-delay="300"
@@ -233,7 +233,7 @@ const LandingPage = () => {
                 نقدمو حاجة أفضل للأطفال والمربين.
               </p>
               <Link
-                to="/landing"
+                to="/signup/teacher"
                 className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
                 data-aos="zoom-in"
                 data-aos-delay="300"
@@ -258,7 +258,7 @@ const LandingPage = () => {
                 كل خطوة مفسّرة بطريقة بسيطة وبصور باش تسهّل عليك الاستعمال من أوّل مرّة.
               </p>
               <Link
-                to="/landing"
+                to="/signup/teacher"
                 className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
                 data-aos="zoom-in"
                 data-aos-delay="300"
@@ -283,7 +283,7 @@ const LandingPage = () => {
                 كل خطوة مفسّرة بطريقة بسيطة وبصور باش تسهّل عليك الاستعمال من أوّل مرّة.
               </p>
               <Link
-                to="/landing"
+                to="/signup/teacher"
                 className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
                 data-aos="zoom-in"
                 data-aos-delay="300"

@@ -58,7 +58,7 @@ const SignupForm = ({ role }) => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-bold text-center mb-6">
-          Signup as {role === 'teacher' ? 'Teacher' : 'Student'}
+        s'inscrire  comme {role === 'teacher' ? 'enseignant' : 'Student'}
         </h2>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -66,7 +66,7 @@ const SignupForm = ({ role }) => {
         <form onSubmit={handleSubmit}>
           {/* Username Field */}
           <div className="mb-4">
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
             <input
               type="text"
               id="username"
@@ -94,7 +94,7 @@ const SignupForm = ({ role }) => {
 
           {/* Password Field */}
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Mot de passe</label>
             <input
               type="password"
               id="password"
@@ -108,11 +108,11 @@ const SignupForm = ({ role }) => {
 
           {/* Confirm Password Field */}
           <div className="mb-6">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirmez le mot de passe</label>
             <input
               type="password"
               id="confirmPassword"
-              name="confirmPassword"
+              name="confirmer mot de passe"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -127,7 +127,8 @@ const SignupForm = ({ role }) => {
               className={`w-full py-2 bg-secondary text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={loading}
             >
-              {loading ? 'Signing up...' : 'Sign Up'}
+              {loading ? 'Inscription en cours...' : "s'inscrire"}
+
             </button>
           </div>
         </form>
@@ -135,9 +136,10 @@ const SignupForm = ({ role }) => {
         {/* Optional: Link to login page */}
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
-            Already have an account?{' '}
+          Vous avez déjà un compte ? 
+          {' '}
             <Link to={`/login/${role === "teacher" ? `teacher` : `student`}`} className="text-indigo-600 hover:text-indigo-800">
-              login here
+              Connectez-vous ici
             </Link>
           </p>
         </div>

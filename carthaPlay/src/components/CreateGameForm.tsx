@@ -179,6 +179,7 @@ export const CreateGameForm = () => {
   
   const handleGameWithQuestionsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const gameData = {
         ...formData,
@@ -188,20 +189,23 @@ export const CreateGameForm = () => {
       };
   
       const response = await axios.post(`https://testcarthaplay.onrender.com/api/games-with-questions`, gameData);
-      setLoading(true)
+
       if (response.status === 201) {
-        setLoading(false)
-        navigate(`/teacher/dashboard/${userId}`)
-        console.log(response)
+        setLoading(false); 
+        navigate(`/teacher/dashboard/${userId}`);
+        console.log(response);
       } else {
         console.error('Unexpected response:', response);
         alert('Something went wrong. Please try again.');
+        setLoading(false); 
       }
     } catch (error) {
       console.error('Error submitting the game and questions form:', error);
       alert('Failed to submit the game and questions form. Please try again.');
+      setLoading(false); 
     }
-  };
+};
+
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
   const removeQuestion = (id: string) => {
@@ -251,8 +255,10 @@ export const CreateGameForm = () => {
                 >
                   <option value="">Sélectionner une matière</option>
                   <option value="math">Mathématiques</option>
+                  <option value="arabe">Arabe</option>
                   <option value="french">Français</option>
                   <option value="science">Sciences</option>
+                  <option value="autre">Autre ...</option>
                 </select>
               </div>
 
@@ -266,6 +272,9 @@ export const CreateGameForm = () => {
                   required
                 >
                   <option value="">Sélectionner un niveau</option>
+                  <option value="1">1ème année</option>
+                  <option value="2">2ème année</option>
+                  <option value="3">3ème année</option>
                   <option value="4">4ème année</option>
                   <option value="5">5ème année</option>
                   <option value="6">6ème année</option>
@@ -496,14 +505,26 @@ export const CreateGameForm = () => {
               </button>
               <button
                 type="button"
-                onClick={(e)=>{handleClick() ; handleGameWithQuestionsSubmit(e)}}
+                onClick={(e) => { handleClick(); handleGameWithQuestionsSubmit(e); }}
                 className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-secondary to-primary text-white font-medium transform hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                 disabled={questions.length === 0 || isDisabled}
-                 
               >
                 <Save className="mr-2 h-5 w-5" />
-                <span>Créer le jeu</span>
+                {loading ? (
+                  <svg
+                    className="animate-spin h-5 w-5 text-white" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24"
+                  >
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                  </svg>
+                ) : (
+                  <span>Créer le jeu</span>
+                )}
               </button>
+
             </div>
           </div>
         )}
