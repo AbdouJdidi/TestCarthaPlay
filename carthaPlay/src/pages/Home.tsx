@@ -60,15 +60,7 @@ export const Home = () => {
                 CarthaPlay
               </span>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-gray-900 transition-colors">
-                FR
-              </button>
-              <div className="w-px h-4 bg-gray-300"></div>
-              <button className="text-gray-600 hover:text-gray-900 transition-colors">
-                EN
-              </button>
-            </div>
+            
           </div>
         </div>
       </header>

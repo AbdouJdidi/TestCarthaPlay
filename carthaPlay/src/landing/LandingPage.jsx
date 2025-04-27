@@ -128,9 +128,9 @@ const LandingPage = () => {
             <a href="#contact" className="text-white hover:text-blue-100 font-baloo2">
               تواصل معنا
             </a>
-             <Link to="/landing" >
+             <a href="/CarthaPlayInstaller.exe" download >
              <button className="bg-[#0057b7] text-white rounded-full py-2 px-5 flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:bg-[#0046a5] hover:-translate-y-0.5 order-1 flex items-center gap-1 text-white font-baloo2">
-              تسجيل الدخول
+             تحميل اللعبة    
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -144,7 +144,7 @@ const LandingPage = () => {
                 />
               </svg>
             </button>
-             </Link>
+             </a>
             
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-white p-2">
@@ -190,14 +190,14 @@ const LandingPage = () => {
                 في شكل ألعاب ترفيهية وممتعة. المنصة مصمّمة باش تخلّي الصغار يقروا، يلعبوا ويتطوّروا في نفس الوقت.
               </p>
               <p className="text-lg mb-6">كل لعبة تتبع هدف تربوي، وكل طفل عندو متابعة وتقييم خاص بيه.</p>
-              <a
-                href="#"
+              <Link
+                to="/landing"
                 className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
                 data-aos="zoom-in"
                 data-aos-delay="300"
               >
                 اكتشف المنصة
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -232,14 +232,14 @@ const LandingPage = () => {
                 المنصّة متاعنا ديما في القمّة، وربحنا برشا Hackathon ومسابقات في مجال EdTech، وكلّ مرّة نزيدو نطوّرو باش
                 نقدمو حاجة أفضل للأطفال والمربين.
               </p>
-              <a
-                href="#"
+              <Link
+                to="/landing"
                 className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
                 data-aos="zoom-in"
                 data-aos-delay="300"
               >
-                إكتشف المنصة
-              </a>
+                اكتشف المنصة
+              </Link>
             </div>
           </div>
         </div>
@@ -257,9 +257,14 @@ const LandingPage = () => {
                 في دليل الاستعمال باش تلقى كلّ شي: كيفاش تخلق حساب، كيفاش تبرمج الألعاب و كيفاش تتابع تقدّم التلامذة.
                 كل خطوة مفسّرة بطريقة بسيطة وبصور باش تسهّل عليك الاستعمال من أوّل مرّة.
               </p>
-              <a href="#" className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2" data-aos="zoom-in" data-aos-delay="300">
-                إكتشف المنصة
-              </a>
+              <Link
+                to="/landing"
+                className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
+                data-aos="zoom-in"
+                data-aos-delay="300"
+              >
+                اكتشف المنصة
+              </Link>
             </div>
           </div>
         </div>
@@ -277,9 +282,14 @@ const LandingPage = () => {
                 في دليل الاستعمال باش تلقى كلّ شي: كيفاش تخلق حساب، كيفاش تبرمج الألعاب و كيفاش تتابع تقدّم التلامذة.
                 كل خطوة مفسّرة بطريقة بسيطة وبصور باش تسهّل عليك الاستعمال من أوّل مرّة.
               </p>
-              <a href="#" className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2" data-aos="zoom-in" data-aos-delay="300">
-                إكتشف المنصة
-              </a>
+              <Link
+                to="/landing"
+                className="inline-block bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 font-baloo2"
+                data-aos="zoom-in"
+                data-aos-delay="300"
+              >
+                اكتشف المنصة
+              </Link>
             </div>
           </div>
         </div>
