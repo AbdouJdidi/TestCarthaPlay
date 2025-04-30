@@ -31,15 +31,15 @@ export const TeacherDashboard = () => {
       iconBg: 'bg-indigo-100',
       iconColor: 'text-primary'
     },
-    {
-      title: 'Suivi des classes',
-      description: 'Visualisez les performances des élèves',
-      icon: BarChart3,
-      path: '/teacher/tracking',
-      gradient: 'from-primary to-secondary',
-      iconBg: 'bg-indigo-100',
-      iconColor: 'text-primary'
-    },
+    // {
+    //   title: 'Suivi des classes',
+    //   description: 'Visualisez les performances des élèves',
+    //   icon: BarChart3,
+    //   path: '/teacher/tracking',
+    //   gradient: 'from-primary to-secondary',
+    //   iconBg: 'bg-indigo-100',
+    //   iconColor: 'text-primary'
+    // },
   ];
 
   return (

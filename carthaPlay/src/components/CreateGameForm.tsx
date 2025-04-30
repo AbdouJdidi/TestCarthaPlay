@@ -452,7 +452,7 @@ export const CreateGameForm = () => {
             </div>
 
             {/* Add New Information Form */}
-            <div className="bg-white rounded-xl p-6 border-2 border-dashed border-gray-200 hover:border-indigo-300 transition-colors duration-200">
+            {/* <div className="bg-white rounded-xl p-6 border-2 border-dashed border-gray-200 hover:border-indigo-300 transition-colors duration-200">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Nouvelle Information</h3>
               <div className="space-y-4">
                 <div>
@@ -493,7 +493,7 @@ export const CreateGameForm = () => {
                   <span>Ajouter l'information</span>
                 </button>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex space-x-4">
               <button

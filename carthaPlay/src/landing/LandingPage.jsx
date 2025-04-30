@@ -8,6 +8,10 @@ import pic2 from "./pic2.png";
 import pic3 from "./pic3.png";
 import pic4 from "./pic4.png";
 import pic5 from "./pic5.png";
+import abdou from "./abdou.png"
+import nader from "./nader.png"
+import roudayna from "./roudayna.png"
+
 
 import arrow1 from "./arrow1.png"
 import arrow2 from "./arrow2.png"
@@ -270,7 +274,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section className="account-creation-section py-16">
+      {/* <section className="account-creation-section py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 flex justify-center" data-aos="fade-right" data-aos-duration="1000">
@@ -293,7 +297,7 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="contact-section py-16" id="contact">
         <div className="container mx-auto px-4 md:px-6">
@@ -325,6 +329,13 @@ const LandingPage = () => {
                         </div>
                     </div>
                     <div class="text-center text-white">
+
+                       <div class="flex justify-center -mb-10">
+                            <div class="relative z-10 bottom-36">
+                                <img src={roudayna} alt="Profile"
+                                    class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover" />
+                          </div>
+                        </div>
                         <h2 class="text-2xl font-bold font-baloo2">Roudayna Kouka</h2>
                         <p class="text-lg mb-4 text-[#5DE0E6] font-baloo2"><strong>CMO</strong></p>
                         <div class="flex items-center justify-center mb-2">
@@ -369,6 +380,15 @@ const LandingPage = () => {
                         </div>
                     </div>
                     <div class="text-center text-white">
+
+
+                    <div class="flex justify-center -mb-10">
+                            <div class="relative z-10 bottom-36">
+                                <img src={nader} alt="Profile"
+                                    class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover" />
+                          </div>
+                        </div>
+                      
                         <h2 class="text-2xl font-bold font-baloo2">Nader Ben Salah</h2>
                         <p class="text-lg mb-4 text-[#5DE0E6] font-baloo2"><strong>CEO</strong></p>
                         <div class="flex items-center justify-center mb-2">
@@ -414,6 +434,13 @@ const LandingPage = () => {
                         </div>
                     </div>
                     <div class="text-center text-white">
+
+                        <div class="flex justify-center -mb-10">
+                            <div class="relative z-10 bottom-36">
+                                <img src={abdou} alt="Profile"
+                                    class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover" />
+                          </div>
+                        </div>
                         <h2 class="text-2xl font-bold font-baloo2">Abderrahmen Jedidi</h2>
                         <p class="text-lg mb-4 text-[#5DE0E6] font-baloo2"><strong>CTO</strong></p>
                         <div class="flex items-center justify-center mb-2">
