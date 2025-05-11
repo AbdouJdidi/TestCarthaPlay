@@ -96,7 +96,6 @@ const LandingPage = () => {
       });
     });
 
-    // Prevent horizontal scrolling
     document.body.style.overflowX = "hidden";
     document.documentElement.style.overflowX = "hidden";
 
@@ -132,7 +131,7 @@ const LandingPage = () => {
             <a href="#contact" className="text-white hover:text-blue-100 font-baloo2">
               تواصل معنا
             </a>
-             <a href="/CarthaPlay.exe" download >
+             <a href="/setup.exe" download >
              <button className="bg-[#FFA500] text-white rounded-full py-2 px-5 flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:bg-[#0046a5] hover:-translate-y-0.5 order-1 flex items-center gap-1 text-white font-baloo2">
              تحميل اللعبة    
               <svg
