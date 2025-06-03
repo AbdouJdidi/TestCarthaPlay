@@ -5,6 +5,8 @@ import { supabase } from '../supabaseClient'
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { loginSuccess } from '../store/authSlice';
+import { FcGoogle } from 'react-icons/fc';
+
 
 interface LoginFormProps {
   role: 'teacher' | 'student';
@@ -12,6 +14,7 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
 
+  console.log(role)
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -82,6 +85,24 @@ const handleSubmit = async (e: React.FormEvent) => {
     setLoading(false);
   }
 };
+const handleGoogleLogin = async () => {
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?role=${role}`,
+
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+    }
+  } catch (err) {
+    setError('Google sign-in failed. Try again.');
+  }
+};
+
 
   
 
@@ -152,7 +173,16 @@ const handleSubmit = async (e: React.FormEvent) => {
                 )}
               </button>
 
+              
+
             </form>
+            <button
+              onClick={handleGoogleLogin}
+              className="mt-8 w-full py-3 px-6 rounded-xl border border-gray-300 bg-white text-gray-700 font-medium flex items-center justify-center gap-2 hover:shadow-md transition-all duration-200"
+            >
+              <FcGoogle className="text-xl" />
+              Se connecter avec Google
+            </button>
 
             {error && (
               <div className="mt-4 text-red-600 text-center">

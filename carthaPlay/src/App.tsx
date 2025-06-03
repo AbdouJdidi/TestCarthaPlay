@@ -15,6 +15,7 @@ import SignupForm from './components/SignupForm';
 import GamesDetails from './pages/GameDetails';
 import LandingPage from './landing/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import AuthCallback from './components/AuthCallback';
 
 
 function App() {
@@ -34,6 +35,8 @@ function App() {
         <Route path="/student/dashboard/:id" element={<StudentDashboard />} />
         <Route path="/student/games" element={<GameList role="student" />} />
         <Route path="/" element={<LandingPage/>} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+
 
         {/* <Route path="/game" element={<GameApp />} /> */}
       </Routes>
