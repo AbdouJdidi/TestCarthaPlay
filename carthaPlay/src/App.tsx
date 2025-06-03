@@ -14,6 +14,8 @@ import { GameList } from './components/GameList';
 import SignupForm from './components/SignupForm';
 import GamesDetails from './pages/GameDetails';
 import LandingPage from './landing/LandingPage';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 function App() {
   return (
@@ -24,7 +26,7 @@ function App() {
         <Route path="/login/student" element={<LoginForm role="student" />} />
         <Route path="/signup/teacher" element={<SignupForm role="teacher" />} />
         <Route path="/signup/student" element={<SignupForm role="student" />} /> 
-        <Route path="/teacher/dashboard/:id" element={<TeacherDashboard />} />
+        <Route path="/teacher/dashboard/:id" element={<ProtectedRoute> <TeacherDashboard /> </ProtectedRoute>} />
         <Route path="/teacher/create-game" element={<CreateGameForm />} />
         <Route path="/teacher/games" element={<GameList role="teacher" />} />
         <Route path="/teacher/games/:gameId" element={<GamesDetails/>} />

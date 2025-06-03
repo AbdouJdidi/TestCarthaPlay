@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, GraduationCap, Lock, Mail } from 'lucide-react';
+import { supabase } from '../supabaseClient'
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import { loginSuccess } from '../store/authSlice';
 
 interface LoginFormProps {
   role: 'teacher' | 'student';
@@ -9,7 +12,6 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
 
-  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -19,37 +21,68 @@ export const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
   });
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true); // Start loading
-  
-    try {
-      const response = await axios.post('https://testcarthaplay.onrender.com/api/login', formData);
-      console.log(response);
-  
-      if (response.data.message === 'Login successful') {
-        localStorage.setItem('token', response.data.token);
-        const userId = response.data.user.id;
-  
-        if (response.data.user.role === 'teacher') {
-          navigate(`/teacher/dashboard/${userId}`);
-        } else {
-          navigate(`/student/dashboard/${userId}`);
-        }
-      } else {
-        setError('Invalid credentials');
-      }
-    } catch (err: any) {
-      if (err.response && err.response.data.error) {
-        setError(err.response.data.error);
-      } else {
-        setError('An error occurred. Please try again.');
-      }
-    } finally {
-      setLoading(false); // Stop loading whether success or error
+  const dispatch = useDispatch();
+
+
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError(null);
+  setLoading(true);
+
+  try {
+    const { email, password } = formData;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+      return;
     }
-  };
+
+    const authUser = data.user;
+
+    const { data: userData, error: userFetchError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('auth_user_id', authUser.id)
+      .single();
+
+    if (userFetchError) {
+      throw new Error('User data not found.');
+    }
+
+    const userId = userData.id;
+
+    const session = data.session;
+    if (session) {
+      localStorage.setItem('token', session.access_token);
+    }
+
+    dispatch(loginSuccess({
+      user: {
+        id: userId,
+        role: userData.role,
+        email: authUser.email,
+      },
+      token: session?.access_token || null,
+    }));
+
+    if (userData.role === 'teacher') {
+      navigate(`/teacher/dashboard/${userId}`);
+    } else {
+      navigate(`/student/dashboard/${userId}`);
+    }
+  } catch (err: any) {
+    setError(err.message || 'An error occurred. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
+
   
 
   return (

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient'
+
 
 const SignupForm = ({ role }) => {
   const navigate = useNavigate();
@@ -11,48 +13,124 @@ const SignupForm = ({ role }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  function generateGameCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 5; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
 
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Create the user data object
-    const userData = { username, email, password, role };
+  setError(null);
 
-    try {
-      setLoading(true);  // Set loading state to true
+  // Basic checks
+  if (!username || !email || !password || !role) {
+    setError('Please fill in all required fields.');
+    return;
+  }
 
-      // Send the signup request to the backend API
-      const response = await fetch('https://testcarthaplay.onrender.com/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+  if (password !== confirmPassword) {
+    setError('Passwords do not match');
+    return;
+  }
 
-      const result = await response.json();
+  // Clean inputs
+  const cleanUsername = username.trim();
+  console.log('Email before cleaning:', email);
 
-      if (response.ok) {
-        // Redirect to the role-specific dashboard after successful signup
-        if (role === 'teacher') {
-          navigate('/login/teacher');
-        } else {
-          navigate('/login/student');
-        }
-      } else {
-        setError(result.error || 'Signup failed, please try again.');
+  const cleanEmail = email.trim().toLowerCase();
+
+  console.log('Cleaned email:', cleanEmail);
+
+
+  // Simple email format check (optional)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(cleanEmail)) {
+    setError('Please enter a valid email address.');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // 1. Create user in Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: cleanEmail,
+      password,
+    });
+
+    if (authError) throw new Error(authError.message);
+
+    const authUserId = authData.user.id;
+
+    // 2. Insert into your public.users table
+    const { data: userData, error: userInsertError } = await supabase
+      .from('users')
+      .insert([{
+        username: cleanUsername,
+        email: cleanEmail,
+        role,
+        auth_user_id: authUserId,
+      }])
+      .select();
+
+    if (userInsertError) throw new Error(userInsertError.message);
+
+    const user = userData[0];
+
+    // 3. Role-based logic
+    if (role === 'teacher') {
+      const { error: teacherError } = await supabase
+        .from('teachers')
+        .insert([{ user_id: user.id }]);
+
+      if (teacherError) throw new Error(teacherError.message);
+
+      navigate('/login/teacher');
+    } else if (role === 'student') {
+      let studentCode;
+      let isUnique = false;
+
+      while (!isUnique) {
+        studentCode = generateGameCode();
+        const { data: existing } = await supabase
+          .from('students')
+          .select('id')
+          .eq('student_code', studentCode)
+          .maybeSingle();
+
+        if (!existing) isUnique = true;
       }
-    } catch (err) {
-      setError('Signup failed, please try again.');
-    } finally {
-      setLoading(false);  // Set loading state to false
+
+      const { error: studentError } = await supabase
+        .from('students')
+        .insert([{ user_id: user.id, student_code: studentCode }]);
+
+      if (studentError) throw new Error(studentError.message);
+
+      navigate('/login/student');
+    } else {
+      throw new Error('Invalid role provided');
     }
-  };
+  } catch (err) {
+  console.error('Full error object:', err);
+
+  // If it's a Supabase error, it may have a `message` or `details`
+  if (err instanceof Error) {
+    setError(err.message);
+  } else {
+    setError('An unknown error occurred during signup.');
+  }
+}
+  finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
