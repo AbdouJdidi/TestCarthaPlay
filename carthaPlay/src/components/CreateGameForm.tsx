@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Target, School, Lightbulb, Plus, X, Save, ChevronRight } from 'lucide-react';
+import { BookOpen, Target, School, Lightbulb, Plus, X, Save, ChevronRight , Brain , Heart} from 'lucide-react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from "react-toastify";
@@ -41,6 +41,8 @@ export const CreateGameForm = () => {
     lesson: '',
     difficulty: '',
     level: '',
+    thinking_time : 0 ,
+    health : 0 ,
   });
   const [item,setItem] = useState<Item[]>([])
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -166,7 +168,7 @@ export const CreateGameForm = () => {
       else {
         toast.error("All information fields are required!", {
             position: "top-center",
-            autoClose: 3000, // Closes after 3 seconds
+            autoClose: 3000, 
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -288,7 +290,7 @@ export const CreateGameForm = () => {
                   type="text"
                   value={formData.lesson}
                   onChange={(e) => setFormData({ ...formData, lesson: e.target.value })}
-                  className="form-input pl-12"
+                  className="form-input pl-12 "
                   placeholder="Titre de la leçon"
                   required
                 />
@@ -309,7 +311,38 @@ export const CreateGameForm = () => {
                   <option value="hard">Difficile</option>
                 </select>
               </div>
+
+              <div className="relative group">
+                <Brain className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
+                <label className="form-label">temps de réflexion</label>
+                <input
+                  type="text"
+                  value={formData.lesson}
+                  onChange={(e) => setFormData({ ...formData, thinking_time: Number( e.target.value )})}
+                  className="form-input pl-12 "
+                  placeholder="Titre de la leçon"
+                  required
+                />
+              </div>
+            
+            <div className="relative group">
+                <Heart className="absolute left-3 top-[2.1rem] transform w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors duration-200" />
+                <label className="form-label">Chances</label>
+                <input
+                  type="text"
+                  value={formData.lesson}
+                  onChange={(e) => setFormData({ ...formData, health: Number(e.target.value) })}
+                  className="form-input pl-12 "
+                  placeholder="Titre de la leçon"
+                  required
+                />
             </div>
+
+
+
+            </div>
+
+            
 
             <button
               type="submit"

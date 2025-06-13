@@ -5,6 +5,8 @@ export interface Game {
   level: string;
   difficulty: 'easy' | 'medium' | 'hard';
   lesson: string;
+  thinking_time : number ; 
+  health : number ; 
   game_code : string,
   teacherId: string;
 }

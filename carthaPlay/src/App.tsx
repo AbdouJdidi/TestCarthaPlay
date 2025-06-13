@@ -38,7 +38,7 @@ function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
 
 
-        {/* <Route path="/game" element={<GameApp />} /> */}
+        {/* <Route path="/ga me" element={<GameApp />} /> */}
       </Routes>
     </Router>
   );
