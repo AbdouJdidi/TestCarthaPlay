@@ -117,7 +117,7 @@ app.post('/api/signup', async (req, res) => {
       let studentCode;
 
       while (!isUnique) {
-        studentCode = generateGameCode(); // Using your function to generate the student code
+        studentCode = generateGameCode(); 
         const { data: existingStudent } = await supabase
           .from('students')
           .select('id')
